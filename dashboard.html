@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Velaro – Dashboard</title>
+<link rel="stylesheet" href="style.css"/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body class="dash-body">
+
+<div id="toast" class="toast"></div>
+
+<!-- LOADING SCREEN -->
+<div id="loadingScreen" class="loading-screen">
+  <div class="loader-logo">
+    <span class="logo-v">V</span>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashApp" class="dash-app hidden">
+
+  <!-- HEADER -->
+  <header class="dash-header">
+    <div class="header-left">
+      <div class="avatar-circle" id="userAvatar">U</div>
+      <div>
+        <p class="welcome-text">Welcome back,</p>
+        <p class="user-email-small" id="headerEmail">—</p>
+      </div>
+    </div>
+    <div class="header-right">
+      <span class="velaro-logo-small">Velaro</span>
+      <button class="logout-btn" onclick="logoutUser()"><i class="fa fa-sign-out-alt"></i></button>
+    </div>
+  </header>
+
+  <!-- WALLET CARD -->
+  <div class="wallet-card">
+    <div class="wallet-bg-circle c1"></div>
+    <div class="wallet-bg-circle c2"></div>
+    <p class="wallet-label">Total Balance</p>
+    <h2 class="wallet-balance" id="walletBalance">Rs 0</h2>
+    <div class="wallet-info-row">
+      <div>
+        <p class="winfo-label">User ID</p>
+        <p class="winfo-val" id="walletUID">—</p>
+      </div>
+      <div>
+        <p class="winfo-label">Referral Code</p>
+        <p class="winfo-val referral-copy" id="walletRef" onclick="copyRef()">—</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUICK SERVICES -->
+  <section class="section-block">
+    <h3 class="section-title">Quick Services</h3>
+    <div class="services-grid">
+      <div class="service-item" onclick="openModal('depositModal')">
+        <div class="svc-icon deposit-icon"><i class="fa fa-plus-circle"></i></div>
+        <p>Deposit</p>
+      </div>
+      <div class="service-item" onclick="openModal('withdrawModal')">
+        <div class="svc-icon withdraw-icon"><i class="fa fa-minus-circle"></i></div>
+        <p>Withdraw</p>
+      </div>
+      <div class="service-item" onclick="showSection('plansSection')">
+        <div class="svc-icon plan-icon"><i class="fa fa-chart-line"></i></div>
+        <p>My Plans</p>
+      </div>
+      <div class="service-item" onclick="showSection('teamSection')">
+        <div class="svc-icon team-icon"><i class="fa fa-users"></i></div>
+        <p>Team</p>
+      </div>
+      <div class="service-item" onclick="showSection('rewardsSection')">
+        <div class="svc-icon reward-icon"><i class="fa fa-gift"></i></div>
+        <p>Rewards</p>
+      </div>
+      <div class="service-item" onclick="showSection('txSection')">
+        <div class="svc-icon tx-icon"><i class="fa fa-history"></i></div>
+        <p>Transactions</p>
+      </div>
+      <div class="service-item" onclick="openModal('supportModal')">
+        <div class="svc-icon support-icon"><i class="fa fa-headset"></i></div>
+        <p>Support</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <section class="section-block">
+    <h3 class="section-title">My Stats</h3>
+    <div class="stats-grid">
+      <div class="stat-card s1">
+        <i class="fa fa-arrow-down stat-icon"></i>
+        <p class="stat-label">Total Deposit</p>
+        <p class="stat-val" id="statDeposit">Rs 0</p>
+      </div>
+      <div class="stat-card s2">
+        <i class="fa fa-arrow-up stat-icon"></i>
+        <p class="stat-label">Total Withdraw</p>
+        <p class="stat-val" id="statWithdraw">Rs 0</p>
+      </div>
+      <div class="stat-card s3">
+        <i class="fa fa-coins stat-icon"></i>
+        <p class="stat-label">Total Profit</p>
+        <p class="stat-val" id="statProfit">Rs 0</p>
+      </div>
+      <div class="stat-card s4">
+        <i class="fa fa-users stat-icon"></i>
+        <p class="stat-label">Team Earnings</p>
+        <p class="stat-val" id="statTeam">Rs 0</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- INVESTMENT PLANS -->
+  <section class="section-block" id="plansSection">
+    <h3 class="section-title">Investment Plans</h3>
+    <div id="plansList" class="plans-list"></div>
+  </section>
+
+  <!-- TEAM SECTION -->
+  <section class="section-block hidden" id="teamSection">
+    <h3 class="section-title">My Team</h3>
+    <div id="teamList" class="team-list"></div>
+  </section>
+
+  <!-- REWARDS SECTION -->
+  <section class="section-block hidden" id="rewardsSection">
+    <h3 class="section-title">Rewards</h3>
+    <div class="reward-card">
+      <i class="fa fa-gift reward-big-icon"></i>
+      <p>Invite friends using your referral code and earn <strong>Rs 100</strong> per referral.</p>
+      <p class="reward-code" id="rewardCode" onclick="copyRef()">Copy Code</p>
+    </div>
+  </section>
+
+  <!-- TRANSACTIONS -->
+  <section class="section-block hidden" id="txSection">
+    <h3 class="section-title">Transactions</h3>
+    <div id="txList" class="tx-list"></div>
+  </section>
+
+</div>
+
+<!-- MODALS -->
+
+<!-- DEPOSIT MODAL -->
+<div id="depositModal" class="modal-overlay hidden">
+  <div class="modal-box">
+    <h3>Deposit Funds</h3>
+    <div class="input-group">
+      <i class="fa fa-rupee-sign input-icon"></i>
+      <input type="number" id="depositAmount" placeholder="Enter amount"/>
+    </div>
+    <div class="input-group">
+      <i class="fa fa-university input-icon"></i>
+      <input type="text" id="depositMethod" placeholder="Payment Method (e.g. EasyPaisa)"/>
+    </div>
+    <div class="input-group">
+      <i class="fa fa-receipt input-icon"></i>
+      <input type="text" id="depositTxId" placeholder="Transaction ID"/>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('depositModal')">Cancel</button>
+      <button class="btn-primary" onclick="submitDeposit()">Submit</button>
+    </div>
+  </div>
+</div>
+
+<!-- WITHDRAW MODAL -->
+<div id="withdrawModal" class="modal-overlay hidden">
+  <div class="modal-box">
+    <h3>Withdraw Funds</h3>
+    <div class="input-group">
+      <i class="fa fa-rupee-sign input-icon"></i>
+      <input type="number" id="withdrawAmount" placeholder="Enter amount"/>
+    </div>
+    <div class="input-group">
+      <i class="fa fa-mobile-alt input-icon"></i>
+      <input type="text" id="withdrawAccount" placeholder="Account Number"/>
+    </div>
+    <div class="input-group">
+      <i class="fa fa-university input-icon"></i>
+      <input type="text" id="withdrawMethod" placeholder="Method (EasyPaisa/JazzCash)"/>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('withdrawModal')">Cancel</button>
+      <button class="btn-primary" onclick="submitWithdraw()">Submit</button>
+    </div>
+  </div>
+</div>
+
+<!-- SUPPORT MODAL -->
+<div id="supportModal" class="modal-overlay hidden">
+  <div class="modal-box">
+    <h3>Support</h3>
+    <p style="color:#666;font-size:14px;margin-bottom:16px;">Contact us for any issue or query.</p>
+    <a href="https://wa.me/923001234567" target="_blank" class="btn-primary" style="display:block;text-align:center;text-decoration:none;">
+      <i class="fab fa-whatsapp"></i> WhatsApp Support
+    </a>
+    <div class="modal-actions" style="margin-top:12px;">
+      <button class="btn-secondary" onclick="closeModal('supportModal')">Close</button>
+    </div>
+  </div>
+</div>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>

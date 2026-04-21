@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Velaro – Admin Panel</title>
+<link rel="stylesheet" href="style.css"/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body class="admin-body">
+
+<div id="toast" class="toast"></div>
+
+<div id="loadingScreen" class="loading-screen">
+  <div class="loader-logo"><span class="logo-v">V</span></div>
+</div>
+
+<div id="adminApp" class="admin-app hidden">
+
+  <!-- ADMIN HEADER -->
+  <header class="admin-header">
+    <div class="admin-brand">
+      <span class="logo-v small">V</span>
+      <span>Velaro Admin</span>
+    </div>
+    <button class="logout-btn" onclick="logoutUser()"><i class="fa fa-sign-out-alt"></i> Logout</button>
+  </header>
+
+  <!-- ADMIN STATS -->
+  <div class="admin-stats">
+    <div class="astat-card">
+      <i class="fa fa-users"></i>
+      <p class="astat-num" id="aStatUsers">0</p>
+      <p class="astat-label">Total Users</p>
+    </div>
+    <div class="astat-card">
+      <i class="fa fa-arrow-down"></i>
+      <p class="astat-num" id="aStatDeposits">Rs 0</p>
+      <p class="astat-label">Total Deposits</p>
+    </div>
+    <div class="astat-card">
+      <i class="fa fa-arrow-up"></i>
+      <p class="astat-num" id="aStatWithdraws">Rs 0</p>
+      <p class="astat-label">Total Withdraws</p>
+    </div>
+    <div class="astat-card">
+      <i class="fa fa-coins"></i>
+      <p class="astat-num" id="aStatProfit">Rs 0</p>
+      <p class="astat-label">Total Profit</p>
+    </div>
+  </div>
+
+  <!-- ADMIN TABS -->
+  <div class="admin-tabs">
+    <button class="atab active" onclick="adminTab('deposits')">Deposits</button>
+    <button class="atab" onclick="adminTab('withdraws')">Withdraws</button>
+    <button class="atab" onclick="adminTab('users')">Users</button>
+    <button class="atab" onclick="adminTab('plans')">Plans</button>
+  </div>
+
+  <!-- DEPOSITS -->
+  <div id="adminDeposits" class="admin-section">
+    <h3 class="section-title">Pending Deposits</h3>
+    <div id="depositsList" class="admin-list"></div>
+  </div>
+
+  <!-- WITHDRAWS -->
+  <div id="adminWithdraws" class="admin-section hidden">
+    <h3 class="section-title">Pending Withdrawals</h3>
+    <div id="withdrawsList" class="admin-list"></div>
+  </div>
+
+  <!-- USERS -->
+  <div id="adminUsers" class="admin-section hidden">
+    <h3 class="section-title">All Users</h3>
+    <div id="usersList" class="admin-list"></div>
+  </div>
+
+  <!-- PLANS MANAGEMENT -->
+  <div id="adminPlans" class="admin-section hidden">
+    <h3 class="section-title">Manage Plans</h3>
+
+    <!-- ADD PLAN FORM -->
+    <div class="plan-form-card">
+      <h4>Add New Plan</h4>
+      <div class="input-group">
+        <i class="fa fa-tag input-icon"></i>
+        <input type="text" id="planName" placeholder="Plan Name (e.g. Starter)"/>
+      </div>
+      <div class="input-group">
+        <i class="fa fa-rupee-sign input-icon"></i>
+        <input type="number" id="planAmount" placeholder="Investment Amount"/>
+      </div>
+      <div class="input-group">
+        <i class="fa fa-coins input-icon"></i>
+        <input type="number" id="planProfit" placeholder="Daily Profit"/>
+      </div>
+      <div class="input-group">
+        <i class="fa fa-calendar input-icon"></i>
+        <input type="number" id="planDays" placeholder="Duration (Days)"/>
+      </div>
+      <button class="btn-primary" onclick="addPlan()">Add Plan</button>
+    </div>
+
+    <div id="plansList2" class="admin-list" style="margin-top:16px;"></div>
+  </div>
+
+</div>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>
