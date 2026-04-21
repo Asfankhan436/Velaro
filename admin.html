@@ -9,54 +9,38 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
 </head>
 <body class="admin-body">
-
 <div id="toast" class="toast"></div>
 
 <div id="loadingScreen" class="loading-screen">
   <div class="loader-logo"><span class="logo-v">V</span></div>
+  <p>Admin Panel</p>
 </div>
 
 <div id="adminApp" class="admin-app hidden">
 
-  <!-- ADMIN HEADER -->
   <header class="admin-header">
     <div class="admin-brand">
-      <span class="logo-v small">V</span>
-      <span>Velaro Admin</span>
+      <div class="logo-v small">V</div>
+      Velaro Admin
     </div>
-    <button class="logout-btn" onclick="logoutUser()"><i class="fa fa-sign-out-alt"></i> Logout</button>
+    <button class="logout-btn" onclick="logoutUser()"><i class="fa fa-sign-out-alt"></i></button>
   </header>
 
-  <!-- ADMIN STATS -->
+  <!-- STATS -->
   <div class="admin-stats">
-    <div class="astat-card">
-      <i class="fa fa-users"></i>
-      <p class="astat-num" id="aStatUsers">0</p>
-      <p class="astat-label">Total Users</p>
-    </div>
-    <div class="astat-card">
-      <i class="fa fa-arrow-down"></i>
-      <p class="astat-num" id="aStatDeposits">Rs 0</p>
-      <p class="astat-label">Total Deposits</p>
-    </div>
-    <div class="astat-card">
-      <i class="fa fa-arrow-up"></i>
-      <p class="astat-num" id="aStatWithdraws">Rs 0</p>
-      <p class="astat-label">Total Withdraws</p>
-    </div>
-    <div class="astat-card">
-      <i class="fa fa-coins"></i>
-      <p class="astat-num" id="aStatProfit">Rs 0</p>
-      <p class="astat-label">Total Profit</p>
-    </div>
+    <div class="astat-card"><i class="fa fa-users"></i><p class="astat-num" id="aStatUsers">0</p><p class="astat-label">Total Users</p></div>
+    <div class="astat-card"><i class="fa fa-arrow-down"></i><p class="astat-num" id="aStatDeposits">0</p><p class="astat-label">Total Deposits</p></div>
+    <div class="astat-card"><i class="fa fa-arrow-up"></i><p class="astat-num" id="aStatWithdraws">0</p><p class="astat-label">Total Withdraws</p></div>
+    <div class="astat-card"><i class="fa fa-coins"></i><p class="astat-num" id="aStatProfit">0</p><p class="astat-label">Total Profit</p></div>
   </div>
 
-  <!-- ADMIN TABS -->
+  <!-- TABS -->
   <div class="admin-tabs">
-    <button class="atab active" onclick="adminTab('deposits')">Deposits</button>
-    <button class="atab" onclick="adminTab('withdraws')">Withdraws</button>
-    <button class="atab" onclick="adminTab('users')">Users</button>
-    <button class="atab" onclick="adminTab('plans')">Plans</button>
+    <button class="atab active" onclick="adminTab('deposits', this)">Deposits</button>
+    <button class="atab" onclick="adminTab('withdraws', this)">Withdraws</button>
+    <button class="atab" onclick="adminTab('users', this)">Users</button>
+    <button class="atab" onclick="adminTab('plans', this)">Plans</button>
+    <button class="atab" onclick="adminTab('settings', this)">Settings</button>
   </div>
 
   <!-- DEPOSITS -->
@@ -77,37 +61,109 @@
     <div id="usersList" class="admin-list"></div>
   </div>
 
-  <!-- PLANS MANAGEMENT -->
+  <!-- PLANS -->
   <div id="adminPlans" class="admin-section hidden">
     <h3 class="section-title">Manage Plans</h3>
-
-    <!-- ADD PLAN FORM -->
     <div class="plan-form-card">
-      <h4>Add New Plan</h4>
-      <div class="input-group">
-        <i class="fa fa-tag input-icon"></i>
-        <input type="text" id="planName" placeholder="Plan Name (e.g. Starter)"/>
-      </div>
-      <div class="input-group">
-        <i class="fa fa-rupee-sign input-icon"></i>
-        <input type="number" id="planAmount" placeholder="Investment Amount"/>
-      </div>
-      <div class="input-group">
-        <i class="fa fa-coins input-icon"></i>
-        <input type="number" id="planProfit" placeholder="Daily Profit"/>
-      </div>
-      <div class="input-group">
-        <i class="fa fa-calendar input-icon"></i>
-        <input type="number" id="planDays" placeholder="Duration (Days)"/>
-      </div>
+      <h4><i class="fa fa-plus" style="color:var(--primary);margin-right:6px"></i>Add New Plan</h4>
+      <div class="input-group"><i class="fa fa-tag input-icon"></i><input type="text" id="planName" placeholder="Plan Name"/></div>
+      <div class="input-group"><i class="fa fa-rupee-sign input-icon"></i><input type="number" id="planAmount" placeholder="Investment Amount"/></div>
+      <div class="input-group"><i class="fa fa-coins input-icon"></i><input type="number" id="planProfit" placeholder="Daily Profit"/></div>
+      <div class="input-group"><i class="fa fa-calendar input-icon"></i><input type="number" id="planDays" placeholder="Duration (Days)"/></div>
       <button class="btn-primary" onclick="addPlan()">Add Plan</button>
     </div>
+    <div id="plansList2" class="admin-list"></div>
+  </div>
 
-    <div id="plansList2" class="admin-list" style="margin-top:16px;"></div>
+  <!-- SETTINGS -->
+  <div id="adminSettings" class="admin-section hidden">
+
+    <!-- PROFIT CONTROL -->
+    <h3 class="section-title" style="margin-bottom:16px">Profit & Deposit Control</h3>
+
+    <div class="profit-control-card">
+      <h4><i class="fa fa-coins" style="color:var(--gold);margin-right:8px"></i>Daily Profit Distribution</h4>
+      <div class="profit-status">
+        <span class="profit-dot"></span>
+        <span id="profitStatusText">Auto profit runs daily at midnight</span>
+      </div>
+      <button class="btn-primary" onclick="runProfitNow()" style="margin-bottom:10px">
+        <i class="fa fa-play"></i> Run Profit Now (Manual)
+      </button>
+      <p style="font-size:12px;color:var(--text2)">This will add daily profit to all users with active plans immediately.</p>
+    </div>
+
+    <!-- DEPOSIT SETTINGS -->
+    <div class="deposit-settings-card">
+      <h4><i class="fa fa-university" style="color:var(--primary);margin-right:8px"></i>Deposit Account Settings</h4>
+      <p style="font-size:12px;color:var(--text2);margin-bottom:16px">These details will be shown to users when they deposit.</p>
+
+      <div class="method-row">
+        <div>
+          <p class="method-name">EasyPaisa</p>
+          <p class="method-detail" id="ep-detail">Not set</p>
+        </div>
+        <button class="btn-credit" onclick="editDepositMethod('EasyPaisa')">Edit</button>
+      </div>
+      <div class="method-row">
+        <div>
+          <p class="method-name">JazzCash</p>
+          <p class="method-detail" id="jc-detail">Not set</p>
+        </div>
+        <button class="btn-credit" onclick="editDepositMethod('JazzCash')">Edit</button>
+      </div>
+      <div class="method-row">
+        <div>
+          <p class="method-name">Bank Transfer</p>
+          <p class="method-detail" id="bt-detail">Not set</p>
+        </div>
+        <button class="btn-credit" onclick="editDepositMethod('Bank')">Edit</button>
+      </div>
+    </div>
+
+    <!-- MANUAL CREDIT -->
+    <div class="plan-form-card">
+      <h4><i class="fa fa-hand-holding-usd" style="color:var(--green);margin-right:8px"></i>Manual Balance Adjust</h4>
+      <div class="input-group"><i class="fa fa-envelope input-icon"></i><input type="text" id="creditUID" placeholder="User ID or Email"/></div>
+      <div class="input-group"><i class="fa fa-rupee-sign input-icon"></i><input type="number" id="creditAmount" placeholder="Amount (negative to deduct)"/></div>
+      <button class="btn-primary" onclick="manualCredit()"><i class="fa fa-check"></i> Apply</button>
+    </div>
+
   </div>
 
 </div>
 
+<!-- DEPOSIT METHOD MODAL -->
+<div id="depositMethodModal" class="modal-overlay hidden">
+  <div class="modal-box">
+    <h3 id="depositMethodTitle">Edit Payment Method</h3>
+    <div class="input-group">
+      <i class="fa fa-hashtag input-icon"></i>
+      <input type="text" id="dmNumber" placeholder="Account Number"/>
+    </div>
+    <div class="input-group" style="margin-top:10px">
+      <i class="fa fa-user input-icon"></i>
+      <input type="text" id="dmName" placeholder="Account Holder Name"/>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('depositMethodModal')">Cancel</button>
+      <button class="btn-primary" onclick="saveDepositMethod()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- USER DETAIL MODAL -->
+<div id="userDetailModal" class="modal-overlay hidden">
+  <div class="modal-box">
+    <h3>User Details</h3>
+    <div id="userDetailContent"></div>
+    <div class="modal-actions" style="margin-top:16px">
+      <button class="btn-secondary" onclick="closeModal('userDetailModal')">Close</button>
+    </div>
+  </div>
+</div>
+
 <script type="module" src="app.js"></script>
 </body>
-</html>
+                                 </html>
+                                 
