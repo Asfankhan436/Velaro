@@ -9,29 +9,17 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
 </head>
 <body class="auth-body">
-
-<!-- TOAST -->
 <div id="toast" class="toast"></div>
-
-<!-- AUTH WRAPPER -->
 <div class="auth-wrapper">
-
-  <!-- BRAND -->
   <div class="auth-brand">
-    <div class="brand-logo">
-      <span class="logo-v">V</span>
-    </div>
+    <div class="brand-logo"><span class="logo-v">V</span></div>
     <h1 class="brand-name">Velaro</h1>
     <p class="brand-tag">Earn Smart. Play Smart.</p>
   </div>
-
-  <!-- TABS -->
   <div class="auth-tabs">
-    <button class="tab-btn active" onclick="switchTab('login')">Login</button>
-    <button class="tab-btn" onclick="switchTab('signup')">Sign Up</button>
+    <button class="tab-btn active" onclick="switchTab('login', this)">Login</button>
+    <button class="tab-btn" onclick="switchTab('signup', this)">Sign Up</button>
   </div>
-
-  <!-- LOGIN FORM -->
   <div id="loginForm" class="auth-form active">
     <div class="input-group">
       <i class="fa fa-envelope input-icon"></i>
@@ -47,8 +35,6 @@
       <div class="btn-loader hidden" id="loginLoader"></div>
     </button>
   </div>
-
-  <!-- SIGNUP FORM -->
   <div id="signupForm" class="auth-form">
     <div class="input-group">
       <i class="fa fa-envelope input-icon"></i>
@@ -56,7 +42,7 @@
     </div>
     <div class="input-group">
       <i class="fa fa-lock input-icon"></i>
-      <input type="password" id="signupPassword" placeholder="Password"/>
+      <input type="password" id="signupPassword" placeholder="Password (min 6 chars)"/>
       <i class="fa fa-eye toggle-pass" onclick="togglePass('signupPassword', this)"></i>
     </div>
     <div class="input-group">
@@ -68,9 +54,7 @@
       <div class="btn-loader hidden" id="signupLoader"></div>
     </button>
   </div>
-
 </div>
-
 <script type="module" src="app.js"></script>
 </body>
 </html>
