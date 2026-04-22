@@ -122,7 +122,7 @@ onAuthStateChanged(auth,async(user)=>{
     const s=await getDoc(doc(db,"users",user.uid));
     if(s.exists()){
       toast("Login successful!","ok");
-      setTimeout(()=>{window.location.href=s.data().role==="admin"?"admin.html":"dashboard.html"},1000);
+      setTimeout(()=>{window.location.href=s.data().role==="admin"?"/Velaro/admin.html":"/Velaro/dashboard.html"},1000);
     }
   }
 });
