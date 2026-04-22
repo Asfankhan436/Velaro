@@ -3,167 +3,279 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Velaro – Admin Panel</title>
-<link rel="stylesheet" href="style.css"/>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<title>Velaro Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<style>
+:root{--bg:#0a0e1a;--bg2:#111827;--card:#141c2e;--card2:#1e2a42;--border:#2a3a5c;--primary:#1e6fff;--accent:#00d4ff;--green:#00e676;--red:#ff4d6d;--gold:#f4b942;--text:#e8edf5;--text2:#8a9bb8;--fh:'Syne',sans-serif;--fb:'DM Sans',sans-serif;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--fb);background:var(--bg);color:var(--text);min-height:100vh;}
+.hidden{display:none!important;}
+::-webkit-scrollbar{width:4px;}::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
+.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-80px);background:var(--card2);color:var(--text);padding:12px 24px;border-radius:50px;font-size:14px;border:1px solid var(--border);z-index:9999;transition:transform .3s;white-space:nowrap;max-width:90vw;text-align:center;}
+.toast.show{transform:translateX(-50%) translateY(0);}
+.toast.ok{border-color:var(--green);color:var(--green);}
+.toast.err{border-color:var(--red);color:var(--red);}
+.toast.info{border-color:var(--accent);color:var(--accent);}
+.loader{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9000;gap:20px;}
+.lbox{width:80px;height:80px;background:linear-gradient(135deg,var(--primary),var(--accent));border-radius:24px;display:flex;align-items:center;justify-content:center;animation:pulse 1.4s infinite;}
+.lbox span{font-family:var(--fh);font-size:36px;font-weight:800;color:#fff;}
+.loader p{color:var(--text2);font-size:13px;letter-spacing:2px;text-transform:uppercase;}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+.app{max-width:600px;margin:0 auto;padding-bottom:40px;}
+.hdr{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;background:var(--card);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--fh);font-size:18px;font-weight:700;background:linear-gradient(135deg,var(--primary),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.bico{width:36px;height:36px;background:linear-gradient(135deg,var(--primary),var(--accent));border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:var(--fh);font-size:18px;color:#fff;-webkit-text-fill-color:#fff;}
+.lbtn{background:rgba(255,77,109,.1);border:1px solid rgba(255,77,109,.3);color:var(--red);padding:8px 12px;border-radius:10px;cursor:pointer;font-size:14px;}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;padding:20px;}
+.sc{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px;text-align:center;transition:border-color .2s;}
+.sc:hover{border-color:var(--primary);}
+.sc i{font-size:22px;color:var(--primary);margin-bottom:10px;display:block;}
+.scn{font-family:var(--fh);font-size:22px;font-weight:800;color:var(--text);}
+.scl{font-size:11px;color:var(--text2);margin-top:4px;}
+.tabs{display:flex;gap:8px;padding:0 20px 16px;overflow-x:auto;}
+.tabs::-webkit-scrollbar{display:none;}
+.tab{padding:9px 18px;border:1.5px solid var(--border);background:var(--card);border-radius:50px;font-family:var(--fb);font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;color:var(--text2);transition:all .2s;}
+.tab.on{background:var(--primary);color:#fff;border-color:var(--primary);box-shadow:0 4px 12px rgba(30,111,255,.3);}
+.sec{padding:0 20px;}
+.stitle{font-family:var(--fh);font-size:16px;font-weight:700;color:var(--text);margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+.stitle::before{content:'';width:3px;height:18px;background:linear-gradient(var(--primary),var(--accent));border-radius:3px;display:inline-block;}
+.list{display:flex;flex-direction:column;gap:12px;}
+.acard{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px;transition:border-color .2s;animation:up .3s ease;}
+@keyframes up{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.arow{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;}
+.ainfo p{font-size:12px;color:var(--text2);margin-top:3px;}
+.ainfo strong{font-size:14px;color:var(--text);}
+.aacts{display:flex;gap:8px;flex-wrap:wrap;}
+.bappr{padding:8px 16px;background:rgba(0,230,118,.15);color:var(--green);border:1px solid rgba(0,230,118,.3);border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;transition:background .2s;}
+.bappr:hover{background:rgba(0,230,118,.25);}
+.brej{padding:8px 16px;background:rgba(255,77,109,.15);color:var(--red);border:1px solid rgba(255,77,109,.3);border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;}
+.bblk{padding:8px 16px;background:rgba(138,155,184,.15);color:var(--text2);border:1px solid var(--border);border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;}
+.binfo{padding:8px 16px;background:rgba(30,111,255,.15);color:var(--primary);border:1px solid rgba(30,111,255,.3);border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;}
+.badge{display:inline-block;padding:4px 12px;border-radius:50px;font-size:11px;font-weight:600;}
+.bp{background:rgba(244,185,66,.15);color:var(--gold);border:1px solid rgba(244,185,66,.3);}
+.ba{background:rgba(0,230,118,.15);color:var(--green);border:1px solid rgba(0,230,118,.3);}
+.br2{background:rgba(255,77,109,.15);color:var(--red);border:1px solid rgba(255,77,109,.3);}
+.formcard{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:12px;margin-bottom:16px;}
+.formcard h4{font-family:var(--fh);font-size:15px;font-weight:700;color:var(--text);}
+.inp{position:relative;display:flex;align-items:center;}
+.inp input{width:100%;padding:13px 14px 13px 42px;border:1.5px solid var(--border);border-radius:12px;font-family:var(--fb);font-size:14px;color:var(--text);background:var(--bg2);outline:none;transition:border-color .2s;}
+.inp input:focus{border-color:var(--primary);}
+.inp input::placeholder{color:#4a5a78;}
+.inp .ii{position:absolute;left:14px;color:var(--text2);font-size:14px;pointer-events:none;}
+.btn{padding:14px;background:linear-gradient(135deg,#1e6fff,#0d4fd6);color:#fff;border:none;border-radius:12px;font-family:var(--fh);font-size:15px;font-weight:600;cursor:pointer;width:100%;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 16px rgba(30,111,255,.4);}
+.mover{position:fixed;inset:0;background:rgba(0,0,0,.75);display:flex;align-items:flex-end;justify-content:center;z-index:500;backdrop-filter:blur(4px);}
+.mbox{background:var(--card);border:1px solid var(--border);border-radius:24px 24px 0 0;padding:28px 24px 40px;width:100%;max-width:600px;}
+.mbox h3{font-family:var(--fh);font-size:18px;font-weight:700;margin-bottom:20px;color:var(--text);}
+.macts{display:flex;gap:10px;margin-top:16px;}
+.btn3{padding:12px;background:var(--bg2);color:var(--text);border:1.5px solid var(--border);border-radius:12px;font-size:14px;cursor:pointer;width:100%;}
+.inp2{position:relative;display:flex;align-items:center;margin-bottom:12px;}
+.inp2 input{width:100%;padding:13px 14px 13px 42px;border:1.5px solid var(--border);border-radius:12px;font-family:var(--fb);font-size:14px;color:var(--text);background:var(--bg2);outline:none;transition:border-color .2s;}
+.inp2 input:focus{border-color:var(--primary);}
+.inp2 input::placeholder{color:#4a5a78;}
+.inp2 .ii{position:absolute;left:14px;color:var(--text2);font-size:14px;pointer-events:none;}
+.prow{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:10px;}
+.prow .lb{font-size:11px;color:var(--text2);margin-bottom:4px;}
+.prow .vl{font-size:14px;font-weight:600;color:var(--text);}
+.mrow{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);gap:12px;}
+.mrow:last-child{border-bottom:none;}
+.empty{text-align:center;padding:48px 20px;color:var(--text2);}
+.empty i{font-size:40px;margin-bottom:14px;display:block;opacity:.3;}
+.empty p{font-size:14px;}
+.dotg{width:8px;height:8px;border-radius:50%;background:var(--green);animation:blink 1.5s infinite;display:inline-block;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.cur-toggle{display:flex;gap:10px;margin-bottom:14px;}
+.ctbtn{padding:10px 20px;border:1.5px solid var(--border);background:var(--card);border-radius:12px;color:var(--text2);font-family:var(--fb);font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;}
+.ctbtn.on{background:var(--primary);color:#fff;border-color:var(--primary);}
+</style>
 </head>
-<body class="admin-body">
+<body>
 <div id="toast" class="toast"></div>
+<div id="loader" class="loader"><div class="lbox"><span>V</span></div><p>Admin Panel</p></div>
 
-<div id="loadingScreen" class="loading-screen">
-  <div class="loader-logo"><span class="logo-v">V</span></div>
-  <p>Admin Panel</p>
-</div>
-
-<div id="adminApp" class="admin-app hidden">
-
-  <header class="admin-header">
-    <div class="admin-brand">
-      <div class="logo-v small">V</div>
-      Velaro Admin
-    </div>
-    <button class="logout-btn" onclick="logoutUser()"><i class="fa fa-sign-out-alt"></i></button>
+<div id="adm" class="app hidden">
+  <header class="hdr">
+    <div class="brand"><div class="bico">V</div>Velaro Admin</div>
+    <button class="lbtn" onclick="doLogout()"><i class="fa fa-sign-out-alt"></i></button>
   </header>
 
-  <!-- STATS -->
-  <div class="admin-stats">
-    <div class="astat-card"><i class="fa fa-users"></i><p class="astat-num" id="aStatUsers">0</p><p class="astat-label">Total Users</p></div>
-    <div class="astat-card"><i class="fa fa-arrow-down"></i><p class="astat-num" id="aStatDeposits">0</p><p class="astat-label">Total Deposits</p></div>
-    <div class="astat-card"><i class="fa fa-arrow-up"></i><p class="astat-num" id="aStatWithdraws">0</p><p class="astat-label">Total Withdraws</p></div>
-    <div class="astat-card"><i class="fa fa-coins"></i><p class="astat-num" id="aStatProfit">0</p><p class="astat-label">Total Profit</p></div>
+  <div class="stats">
+    <div class="sc"><i class="fa fa-users"></i><p class="scn" id="asU">0</p><p class="scl">Users</p></div>
+    <div class="sc"><i class="fa fa-arrow-down"></i><p class="scn" id="asD">0</p><p class="scl">Deposits</p></div>
+    <div class="sc"><i class="fa fa-arrow-up"></i><p class="scn" id="asW">0</p><p class="scl">Withdraws</p></div>
+    <div class="sc"><i class="fa fa-coins"></i><p class="scn" id="asP">0</p><p class="scl">Profit Paid</p></div>
   </div>
 
-  <!-- TABS -->
-  <div class="admin-tabs">
-    <button class="atab active" onclick="adminTab('deposits', this)">Deposits</button>
-    <button class="atab" onclick="adminTab('withdraws', this)">Withdraws</button>
-    <button class="atab" onclick="adminTab('users', this)">Users</button>
-    <button class="atab" onclick="adminTab('plans', this)">Plans</button>
-    <button class="atab" onclick="adminTab('settings', this)">Settings</button>
+  <div class="tabs">
+    <button class="tab on" onclick="aTab('deposits',this)">Deposits</button>
+    <button class="tab" onclick="aTab('withdraws',this)">Withdraws</button>
+    <button class="tab" onclick="aTab('users',this)">Users</button>
+    <button class="tab" onclick="aTab('plans',this)">Plans</button>
+    <button class="tab" onclick="aTab('settings',this)">Settings</button>
   </div>
 
-  <!-- DEPOSITS -->
-  <div id="adminDeposits" class="admin-section">
-    <h3 class="section-title">Pending Deposits</h3>
-    <div id="depositsList" class="admin-list"></div>
+  <div id="secDeposits" class="sec">
+    <h3 class="stitle">Pending Deposits</h3>
+    <div class="list" id="depList"></div>
   </div>
 
-  <!-- WITHDRAWS -->
-  <div id="adminWithdraws" class="admin-section hidden">
-    <h3 class="section-title">Pending Withdrawals</h3>
-    <div id="withdrawsList" class="admin-list"></div>
+  <div id="secWithdraws" class="sec hidden">
+    <h3 class="stitle">Pending Withdrawals</h3>
+    <div class="list" id="wdList"></div>
   </div>
 
-  <!-- USERS -->
-  <div id="adminUsers" class="admin-section hidden">
-    <h3 class="section-title">All Users</h3>
-    <div id="usersList" class="admin-list"></div>
+  <div id="secUsers" class="sec hidden">
+    <h3 class="stitle">All Users</h3>
+    <div class="list" id="uList"></div>
   </div>
 
-  <!-- PLANS -->
-  <div id="adminPlans" class="admin-section hidden">
-    <h3 class="section-title">Manage Plans</h3>
-    <div class="plan-form-card">
+  <div id="secPlans" class="sec hidden">
+    <h3 class="stitle">Manage Plans</h3>
+    <div class="formcard">
       <h4><i class="fa fa-plus" style="color:var(--primary);margin-right:6px"></i>Add New Plan</h4>
-      <div class="input-group"><i class="fa fa-tag input-icon"></i><input type="text" id="planName" placeholder="Plan Name"/></div>
-      <div class="input-group"><i class="fa fa-rupee-sign input-icon"></i><input type="number" id="planAmount" placeholder="Investment Amount"/></div>
-      <div class="input-group"><i class="fa fa-coins input-icon"></i><input type="number" id="planProfit" placeholder="Daily Profit"/></div>
-      <div class="input-group"><i class="fa fa-calendar input-icon"></i><input type="number" id="planDays" placeholder="Duration (Days)"/></div>
-      <button class="btn-primary" onclick="addPlan()">Add Plan</button>
+      <div class="inp"><i class="fa fa-tag ii"></i><input type="text" id="pName" placeholder="Plan Name (e.g. Starter)"/></div>
+      <div class="inp"><i class="fa fa-rupee-sign ii"></i><input type="number" id="pAmt" placeholder="Investment Amount"/></div>
+      <div class="inp"><i class="fa fa-coins ii"></i><input type="number" id="pProfit" placeholder="Daily Profit"/></div>
+      <div class="inp"><i class="fa fa-calendar ii"></i><input type="number" id="pDays" placeholder="Duration (Days)"/></div>
+      <button class="btn" onclick="addPlan()"><i class="fa fa-plus"></i> Add Plan</button>
     </div>
-    <div id="plansList2" class="admin-list"></div>
+    <div class="list" id="planList"></div>
   </div>
 
-  <!-- SETTINGS -->
-  <div id="adminSettings" class="admin-section hidden">
+  <div id="secSettings" class="sec hidden">
+    <h3 class="stitle">App Settings</h3>
 
-    <!-- PROFIT CONTROL -->
-    <h3 class="section-title" style="margin-bottom:16px">Profit & Deposit Control</h3>
+    <!-- CURRENCY -->
+    <div class="formcard">
+      <h4><i class="fa fa-globe" style="color:var(--gold);margin-right:8px"></i>App Currency</h4>
+      <p style="font-size:12px;color:var(--text2);margin-bottom:14px">Choose currency shown to all users.</p>
+      <div class="cur-toggle">
+        <button class="ctbtn on" id="curPKR" onclick="setCurrency('PKR')">🇵🇰 PKR</button>
+        <button class="ctbtn" id="curUSD" onclick="setCurrency('USD')">🇺🇸 USD</button>
+      </div>
+      <button class="btn" onclick="saveCurrency()"><i class="fa fa-save"></i> Save Currency</button>
+    </div>
 
-    <div class="profit-control-card">
+    <!-- PROFIT -->
+    <div class="formcard">
       <h4><i class="fa fa-coins" style="color:var(--gold);margin-right:8px"></i>Daily Profit Distribution</h4>
-      <div class="profit-status">
-        <span class="profit-dot"></span>
-        <span id="profitStatusText">Auto profit runs daily at midnight</span>
-      </div>
-      <button class="btn-primary" onclick="runProfitNow()" style="margin-bottom:10px">
-        <i class="fa fa-play"></i> Run Profit Now (Manual)
-      </button>
-      <p style="font-size:12px;color:var(--text2)">This will add daily profit to all users with active plans immediately.</p>
+      <p style="font-size:13px;color:var(--text2);margin-bottom:14px;display:flex;align-items:center;gap:8px;"><span class="dotg"></span> Distributes daily profit to all active plan holders.</p>
+      <button class="btn" onclick="runProfit()"><i class="fa fa-play"></i> Run Profit Now</button>
+      <p style="font-size:12px;color:var(--text2);margin-top:10px">Note: Each user gets profit only once per day.</p>
     </div>
 
-    <!-- DEPOSIT SETTINGS -->
-    <div class="deposit-settings-card">
+    <!-- DEPOSIT ACCOUNTS -->
+    <div class="formcard">
       <h4><i class="fa fa-university" style="color:var(--primary);margin-right:8px"></i>Deposit Account Settings</h4>
-      <p style="font-size:12px;color:var(--text2);margin-bottom:16px">These details will be shown to users when they deposit.</p>
-
-      <div class="method-row">
-        <div>
-          <p class="method-name">EasyPaisa</p>
-          <p class="method-detail" id="ep-detail">Not set</p>
-        </div>
-        <button class="btn-credit" onclick="editDepositMethod('EasyPaisa')">Edit</button>
-      </div>
-      <div class="method-row">
-        <div>
-          <p class="method-name">JazzCash</p>
-          <p class="method-detail" id="jc-detail">Not set</p>
-        </div>
-        <button class="btn-credit" onclick="editDepositMethod('JazzCash')">Edit</button>
-      </div>
-      <div class="method-row">
-        <div>
-          <p class="method-name">Bank Transfer</p>
-          <p class="method-detail" id="bt-detail">Not set</p>
-        </div>
-        <button class="btn-credit" onclick="editDepositMethod('Bank')">Edit</button>
-      </div>
+      <p style="font-size:12px;color:var(--text2);margin-bottom:14px">These details are shown to users on deposit screen.</p>
+      <div class="mrow"><div><p style="font-size:14px;font-weight:500">EasyPaisa</p><p style="font-size:12px;color:var(--text2)" id="ep-d">Not set</p></div><button class="binfo" onclick="editDep('EasyPaisa')">Edit</button></div>
+      <div class="mrow"><div><p style="font-size:14px;font-weight:500">JazzCash</p><p style="font-size:12px;color:var(--text2)" id="jc-d">Not set</p></div><button class="binfo" onclick="editDep('JazzCash')">Edit</button></div>
+      <div class="mrow"><div><p style="font-size:14px;font-weight:500">Bank Transfer</p><p style="font-size:12px;color:var(--text2)" id="bk-d">Not set</p></div><button class="binfo" onclick="editDep('Bank')">Edit</button></div>
+      <div class="mrow"><div><p style="font-size:14px;font-weight:500">USD Wire</p><p style="font-size:12px;color:var(--text2)" id="ud-d">Not set</p></div><button class="binfo" onclick="editDep('USD')">Edit</button></div>
     </div>
 
-    <!-- MANUAL CREDIT -->
-    <div class="plan-form-card">
+    <!-- MANUAL BALANCE -->
+    <div class="formcard">
       <h4><i class="fa fa-hand-holding-usd" style="color:var(--green);margin-right:8px"></i>Manual Balance Adjust</h4>
-      <div class="input-group"><i class="fa fa-envelope input-icon"></i><input type="text" id="creditUID" placeholder="User ID or Email"/></div>
-      <div class="input-group"><i class="fa fa-rupee-sign input-icon"></i><input type="number" id="creditAmount" placeholder="Amount (negative to deduct)"/></div>
-      <button class="btn-primary" onclick="manualCredit()"><i class="fa fa-check"></i> Apply</button>
+      <div class="inp"><i class="fa fa-envelope ii"></i><input type="text" id="crEmail" placeholder="User Email"/></div>
+      <div class="inp" style="margin-top:10px"><i class="fa fa-rupee-sign ii"></i><input type="number" id="crAmt" placeholder="Amount (negative to deduct)"/></div>
+      <button class="btn" style="margin-top:10px" onclick="manualCredit()"><i class="fa fa-check"></i> Apply</button>
     </div>
-
   </div>
-
 </div>
 
-<!-- DEPOSIT METHOD MODAL -->
-<div id="depositMethodModal" class="modal-overlay hidden">
-  <div class="modal-box">
-    <h3 id="depositMethodTitle">Edit Payment Method</h3>
-    <div class="input-group">
-      <i class="fa fa-hashtag input-icon"></i>
-      <input type="text" id="dmNumber" placeholder="Account Number"/>
-    </div>
-    <div class="input-group" style="margin-top:10px">
-      <i class="fa fa-user input-icon"></i>
-      <input type="text" id="dmName" placeholder="Account Holder Name"/>
-    </div>
-    <div class="modal-actions">
-      <button class="btn-secondary" onclick="closeModal('depositMethodModal')">Cancel</button>
-      <button class="btn-primary" onclick="saveDepositMethod()">Save</button>
-    </div>
+<!-- DEPOSIT METHOD EDIT MODAL -->
+<div id="mDepEdit" class="mover hidden">
+  <div class="mbox">
+    <h3 id="mDepTitle">Edit Payment Method</h3>
+    <div class="inp2"><i class="fa fa-hashtag ii"></i><input type="text" id="dmNum" placeholder="Account Number / IBAN"/></div>
+    <div class="inp2"><i class="fa fa-user ii"></i><input type="text" id="dmNm" placeholder="Account Holder Name"/></div>
+    <div class="macts"><button class="btn3" onclick="closeM('mDepEdit')">Cancel</button><button class="btn" onclick="saveDepMethod()">Save</button></div>
   </div>
 </div>
 
 <!-- USER DETAIL MODAL -->
-<div id="userDetailModal" class="modal-overlay hidden">
-  <div class="modal-box">
+<div id="mUser" class="mover hidden">
+  <div class="mbox">
     <h3>User Details</h3>
-    <div id="userDetailContent"></div>
-    <div class="modal-actions" style="margin-top:16px">
-      <button class="btn-secondary" onclick="closeModal('userDetailModal')">Close</button>
-    </div>
+    <div id="uDetail"></div>
+    <div class="macts"><button class="btn3" onclick="closeM('mUser')">Close</button></div>
   </div>
 </div>
 
-<script type="module" src="app.js"></script>
-</body>
-                                 </html>
-                                 
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import{getAuth,signOut,onAuthStateChanged}from"https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import{getFirestore,doc,getDoc,setDoc,updateDoc,addDoc,deleteDoc,collection,query,where,getDocs,orderBy,serverTimestamp,increment}from"https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+const app=initializeApp({apiKey:"AIzaSyAicy4ym0omYMS5te0BXsR15d7jTrcydak",authDomain:"velaro-c487e.firebaseapp.com",projectId:"velaro-c487e",storageBucket:"velaro-c487e.firebasestorage.app",messagingSenderId:"394100524704",appId:"1:394100524704:web:a44d395c404d6f6eb2abc5"});
+const auth=getAuth(app);
+const db=getFirestore(app);
+
+let editMeth="",selCur="PKR";
+
+function toast(msg,type=""){const t=document.getElementById("toast");t.textContent=msg;t.className=`toast show ${type}`;setTimeout(()=>{t.className="toast"},3000);}
+function fmt(ts){if(!ts)return"—";const d=ts.toDate?ts.toDate():new Date(ts);return d.toLocaleDateString("en-PK",{day:"2-digit",month:"short",year:"numeric"});}
+function sym(c){return c==="USD"?"$":"Rs";}
+
+window.openM=function(id){document.getElementById(id).classList.remove("hidden");};
+window.closeM=function(id){document.getElementById(id).classList.add("hidden");};
+window.doLogout=async function(){await signOut(auth);window.location.href="index.html";};
+
+window.aTab=function(tab,btn){
+  document.querySelectorAll(".tab").forEach(b=>b.classList.remove("on"));
+  document.querySelectorAll(".sec").forEach(s=>s.classList.add("hidden"));
+  btn.classList.add("on");
+  document.getElementById("sec"+tab.charAt(0).toUpperCase()+tab.slice(1)).classList.remove("hidden");
+  if(tab==="deposits")loadDeps();
+  else if(tab==="withdraws")loadWds();
+  else if(tab==="users")loadUsers();
+  else if(tab==="plans")loadPlans();
+  else if(tab==="settings"){loadDepSettings();loadCurSetting();}
+};
+
+onAuthStateChanged(auth,async(user)=>{
+  if(!user)return(window.location.href="index.html");
+  const s=await getDoc(doc(db,"users",user.uid));
+  if(!s.exists()||s.data().role!=="admin")return(window.location.href="dashboard.html");
+  document.getElementById("loader").classList.add("hidden");
+  document.getElementById("adm").classList.remove("hidden");
+  loadStats();loadDeps();
+});
+
+async function loadStats(){
+  const s=await getDocs(collection(db,"users"));
+  let td=0,tw=0,tp=0;
+  s.forEach(d=>{const u=d.data();td+=u.totalDeposit||0;tw+=u.totalWithdraw||0;tp+=u.totalProfit||0;});
+  const cur=await getCur();const sm=sym(cur);
+  document.getElementById("asU").textContent=s.size;
+  document.getElementById("asD").textContent=`${sm} ${td}`;
+  document.getElementById("asW").textContent=`${sm} ${tw}`;
+  document.getElementById("asP").textContent=`${sm} ${tp}`;
+}
+
+async function getCur(){
+  try{const s=await getDoc(doc(db,"settings","app"));return s.exists()?s.data().currency||"PKR":"PKR";}catch(e){return"PKR";}
+}
+
+async function loadDeps(){
+  const el=document.getElementById("depList");el.innerHTML="";
+  try{
+    const q=query(collection(db,"deposits"),where("status","==","pending"),orderBy("createdAt","desc"));
+    const s=await getDocs(q);
+    if(s.empty){el.innerHTML=`<div class="empty"><i class="fa fa-check-circle"></i><p>No pending deposits</p></div>`;return;}
+    const cur=await getCur();const sm=sym(cur);
+    s.forEach(d=>{
+      const dep=d.data();const c=document.createElement("div");c.className="acard";
+      c.innerHTML=`<div class="arow"><div class="ainfo"><strong>${dep.email}</strong><p>Amount: <strong style="color:var(--green)">${sm} ${dep.amount}</strong></p><p>Method: ${dep.method}</p><p>TX ID: <strong style="color:var(--accent)">${dep.txId}</strong></p><p>${fmt(dep.createdAt)}</p></div><span class="badge bp">Pending</span></div><div class="aacts"><button class="bappr" onclick="apprDep('${d.id}','${dep.userId}',${dep.amount})">✓ Approve</button><button class="brej" onclick="rejReq('deposits','${d.id}')">✗ Reject</button></div>`;
+      el.appendChild(c);
+    });
+  }catch(e){el.innerHTML=`<div class="empty"><p>Create Firestore composite index. Check browser console for link.</p></div>`;}
+}
+
+window.apprDep=async function(id,uid,amt){
+  try{
+    await updateDoc(doc(db,"deposits",id),{status:"approved"});
+    await updateDoc(doc(db,"users",uid),{balance:increment(amt),totalDeposit:increment(amt)});
+    await addDoc(collection(db,"transactions"),{userId:uid,type:"deposit",amount:amt,note:"Deposit approved",createdAt:serverTimestamp()});
+    toast("Deposit a
