@@ -3,58 +3,130 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Velaro – Earn Smart. Play Smart.</title>
-<link rel="stylesheet" href="style.css"/>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<title>Velaro</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<style>
+:root{--bg:#0a0e1a;--card:#141c2e;--border:#2a3a5c;--primary:#1e6fff;--accent:#00d4ff;--green:#00e676;--red:#ff4d6d;--gold:#f4b942;--text:#e8edf5;--text2:#8a9bb8;--fh:'Syne',sans-serif;--fb:'DM Sans',sans-serif;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--fb);background:var(--bg);color:var(--text);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;position:relative;overflow:hidden;}
+body::before{content:'';position:absolute;width:500px;height:500px;background:radial-gradient(circle,rgba(30,111,255,0.12) 0%,transparent 70%);top:-150px;left:-150px;border-radius:50%;}
+body::after{content:'';position:absolute;width:300px;height:300px;background:radial-gradient(circle,rgba(0,212,255,0.08) 0%,transparent 70%);bottom:-80px;right:-80px;border-radius:50%;}
+.card{background:var(--card);border:1px solid var(--border);border-radius:24px;padding:36px 28px;width:100%;max-width:400px;position:relative;z-index:1;animation:up .5s ease;}
+@keyframes up{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+.brand{text-align:center;margin-bottom:28px;}
+.logo{width:72px;height:72px;background:linear-gradient(135deg,var(--primary),var(--accent));border-radius:20px;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;box-shadow:0 0 30px rgba(30,111,255,0.3);}
+.logo span{font-family:var(--fh);font-size:36px;font-weight:800;color:#fff;}
+.brand h1{font-family:var(--fh);font-size:30px;font-weight:800;background:linear-gradient(135deg,var(--primary),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.brand p{color:var(--text2);font-size:13px;margin-top:6px;letter-spacing:1px;}
+.tabs{display:flex;background:#111827;border-radius:12px;padding:4px;margin-bottom:24px;border:1px solid var(--border);}
+.tab{flex:1;padding:10px;border:none;background:transparent;border-radius:10px;font-family:var(--fb);font-size:14px;font-weight:500;color:var(--text2);cursor:pointer;transition:all .2s;}
+.tab.active{background:var(--primary);color:#fff;font-weight:600;box-shadow:0 2px 12px rgba(30,111,255,0.4);}
+.form{display:none;flex-direction:column;gap:14px;}
+.form.active{display:flex;}
+.inp{position:relative;display:flex;align-items:center;}
+.inp input{width:100%;padding:13px 14px 13px 42px;border:1.5px solid var(--border);border-radius:12px;font-family:var(--fb);font-size:14px;color:var(--text);background:#111827;outline:none;transition:border-color .2s,box-shadow .2s;}
+.inp input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(30,111,255,0.15);}
+.inp input::placeholder{color:#4a5a78;}
+.iico{position:absolute;left:14px;color:var(--text2);font-size:14px;pointer-events:none;}
+.eye{position:absolute;right:14px;color:var(--text2);cursor:pointer;font-size:14px;}
+.btn{padding:14px;background:linear-gradient(135deg,#1e6fff,#0d4fd6);color:#fff;border:none;border-radius:12px;font-family:var(--fh);font-size:15px;font-weight:600;cursor:pointer;width:100%;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 16px rgba(30,111,255,0.4);letter-spacing:.5px;transition:opacity .2s,transform .1s;}
+.btn:active{transform:scale(.98);}
+.spin{width:18px;height:18px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;display:none;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-80px);background:#1e2a42;color:var(--text);padding:12px 24px;border-radius:50px;font-size:14px;border:1px solid var(--border);z-index:9999;transition:transform .3s ease;white-space:nowrap;max-width:90vw;text-align:center;}
+.toast.show{transform:translateX(-50%) translateY(0);}
+.toast.ok{border-color:var(--green);color:var(--green);}
+.toast.err{border-color:var(--red);color:var(--red);}
+</style>
 </head>
-<body class="auth-body">
+<body>
 <div id="toast" class="toast"></div>
-<div class="auth-wrapper">
-  <div class="auth-brand">
-    <div class="brand-logo"><span class="logo-v">V</span></div>
-    <h1 class="brand-name">Velaro</h1>
-    <p class="brand-tag">Earn Smart. Play Smart.</p>
+<div class="card">
+  <div class="brand">
+    <div class="logo"><span>V</span></div>
+    <h1>Velaro</h1>
+    <p>Earn Smart. Play Smart.</p>
   </div>
-  <div class="auth-tabs">
-    <button class="tab-btn active" onclick="switchTab('login', this)">Login</button>
-    <button class="tab-btn" onclick="switchTab('signup', this)">Sign Up</button>
+  <div class="tabs">
+    <button class="tab active" onclick="sw('login',this)">Login</button>
+    <button class="tab" onclick="sw('signup',this)">Sign Up</button>
   </div>
-  <div id="loginForm" class="auth-form active">
-    <div class="input-group">
-      <i class="fa fa-envelope input-icon"></i>
-      <input type="email" id="loginEmail" placeholder="Email Address" autocomplete="off"/>
-    </div>
-    <div class="input-group">
-      <i class="fa fa-lock input-icon"></i>
-      <input type="password" id="loginPassword" placeholder="Password"/>
-      <i class="fa fa-eye toggle-pass" onclick="togglePass('loginPassword', this)"></i>
-    </div>
-    <button class="btn-primary" onclick="loginUser()">
-      <span>Login</span>
-      <div class="btn-loader hidden" id="loginLoader"></div>
-    </button>
+  <div id="loginForm" class="form active">
+    <div class="inp"><i class="fa fa-envelope iico"></i><input type="email" id="lEmail" placeholder="Email Address"/></div>
+    <div class="inp"><i class="fa fa-lock iico"></i><input type="password" id="lPass" placeholder="Password"/><i class="fa fa-eye eye" onclick="tp('lPass',this)"></i></div>
+    <button class="btn" onclick="doLogin()"><span>Login</span><div class="spin" id="lSpin"></div></button>
   </div>
-  <div id="signupForm" class="auth-form">
-    <div class="input-group">
-      <i class="fa fa-envelope input-icon"></i>
-      <input type="email" id="signupEmail" placeholder="Email Address" autocomplete="off"/>
-    </div>
-    <div class="input-group">
-      <i class="fa fa-lock input-icon"></i>
-      <input type="password" id="signupPassword" placeholder="Password (min 6 chars)"/>
-      <i class="fa fa-eye toggle-pass" onclick="togglePass('signupPassword', this)"></i>
-    </div>
-    <div class="input-group">
-      <i class="fa fa-user-plus input-icon"></i>
-      <input type="text" id="referralInput" placeholder="Referral Code (Optional)" autocomplete="off"/>
-    </div>
-    <button class="btn-primary" onclick="signupUser()">
-      <span>Create Account</span>
-      <div class="btn-loader hidden" id="signupLoader"></div>
-    </button>
+  <div id="signupForm" class="form">
+    <div class="inp"><i class="fa fa-envelope iico"></i><input type="email" id="sEmail" placeholder="Email Address"/></div>
+    <div class="inp"><i class="fa fa-lock iico"></i><input type="password" id="sPass" placeholder="Password (min 6)"/><i class="fa fa-eye eye" onclick="tp('sPass',this)"></i></div>
+    <div class="inp"><i class="fa fa-user-plus iico"></i><input type="text" id="sRef" placeholder="Referral Code (Optional)"/></div>
+    <button class="btn" onclick="doSignup()"><span>Create Account</span><div class="spin" id="sSpin"></div></button>
   </div>
 </div>
-<script type="module" src="app.js"></script>
+
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import{getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,onAuthStateChanged}from"https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import{getFirestore,doc,setDoc,getDoc,collection,query,where,getDocs,updateDoc,addDoc,serverTimestamp,increment}from"https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+const app=initializeApp({apiKey:"AIzaSyAicy4ym0omYMS5te0BXsR15d7jTrcydak",authDomain:"velaro-c487e.firebaseapp.com",projectId:"velaro-c487e",storageBucket:"velaro-c487e.firebasestorage.app",messagingSenderId:"394100524704",appId:"1:394100524704:web:a44d395c404d6f6eb2abc5"});
+const auth=getAuth(app);
+const db=getFirestore(app);
+
+function toast(msg,type=""){const t=document.getElementById("toast");t.textContent=msg;t.className=`toast show ${type}`;setTimeout(()=>{t.className="toast"},3000);}
+function genRef(){return"VLR"+Math.random().toString(36).substring(2,7).toUpperCase();}
+function fbErr(c){return{["auth/email-already-in-use"]:"Email already registered",["auth/invalid-email"]:"Invalid email format",["auth/weak-password"]:"Password too weak (min 6)",["auth/user-not-found"]:"No account found",["auth/wrong-password"]:"Wrong password",["auth/invalid-credential"]:"Wrong email or password"}[c]||"Something went wrong";}
+
+window.sw=function(t,btn){document.querySelectorAll(".tab").forEach(b=>b.classList.remove("active"));document.querySelectorAll(".form").forEach(f=>f.classList.remove("active"));document.getElementById(t+"Form").classList.add("active");btn.classList.add("active");};
+window.tp=function(id,ico){const i=document.getElementById(id);i.type=i.type==="password"?"text":"password";ico.classList.toggle("fa-eye");ico.classList.toggle("fa-eye-slash");};
+
+window.doLogin=async function(){
+  const email=document.getElementById("lEmail").value.trim();
+  const pass=document.getElementById("lPass").value;
+  if(!email||!pass)return toast("Fill all fields","err");
+  const sp=document.getElementById("lSpin");sp.style.display="block";
+  try{
+    await signInWithEmailAndPassword(auth,email,pass);
+  }catch(e){sp.style.display="none";toast(fbErr(e.code),"err");}
+};
+
+window.doSignup=async function(){
+  const email=document.getElementById("sEmail").value.trim();
+  const pass=document.getElementById("sPass").value;
+  const ref=document.getElementById("sRef").value.trim();
+  if(!email||!pass)return toast("Fill all fields","err");
+  if(pass.length<6)return toast("Password min 6 characters","err");
+  const sp=document.getElementById("sSpin");sp.style.display="block";
+  try{
+    const cred=await createUserWithEmailAndPassword(auth,email,pass);
+    const uid=cred.user.uid;
+    const refCode=genRef();
+    let referredBy=null;
+    if(ref){
+      const rq=query(collection(db,"users"),where("referralCode","==",ref));
+      const rs=await getDocs(rq);
+      if(!rs.empty){
+        referredBy=rs.docs[0].id;
+        await updateDoc(doc(db,"users",referredBy),{balance:increment(100),teamEarnings:increment(100)});
+        await addDoc(collection(db,"transactions"),{userId:referredBy,type:"referral_bonus",amount:100,note:"Referral bonus",createdAt:serverTimestamp()});
+      }
+    }
+    await setDoc(doc(db,"users",uid),{uid,email,displayName:"",balance:0,role:"user",referralCode:refCode,referredBy,totalDeposit:0,totalWithdraw:0,totalProfit:0,teamEarnings:0,blocked:false,currency:"PKR",wallet:{method:"",number:"",name:""},createdAt:serverTimestamp()});
+    toast("Account created! Logging in...","ok");
+  }catch(e){sp.style.display="none";toast(fbErr(e.code),"err");}
+};
+
+onAuthStateChanged(auth,async(user)=>{
+  if(user){
+    const s=await getDoc(doc(db,"users",user.uid));
+    if(s.exists()){
+      toast("Login successful!","ok");
+      setTimeout(()=>{window.location.href=s.data().role==="admin"?"admin.html":"dashboard.html"},1000);
+    }
+  }
+});
+</script>
 </body>
-</html>
+  </html>
+  
