@@ -4,272 +4,304 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Velaro – Dashboard</title>
-<link rel="stylesheet" href="style.css"/>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<style>
+:root{--bg:#0a0e1a;--bg2:#111827;--card:#141c2e;--card2:#1e2a42;--border:#2a3a5c;--primary:#1e6fff;--accent:#00d4ff;--green:#00e676;--red:#ff4d6d;--gold:#f4b942;--text:#e8edf5;--text2:#8a9bb8;--fh:'Syne',sans-serif;--fb:'DM Sans',sans-serif;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--fb);background:var(--bg);color:var(--text);min-height:100vh;}
+.hidden{display:none!important;}
+::-webkit-scrollbar{width:4px;}::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
+
+/* TOAST */
+.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-80px);background:var(--card2);color:var(--text);padding:12px 24px;border-radius:50px;font-size:14px;border:1px solid var(--border);z-index:9999;transition:transform .3s;white-space:nowrap;max-width:90vw;text-align:center;}
+.toast.show{transform:translateX(-50%) translateY(0);}
+.toast.ok{border-color:var(--green);color:var(--green);}
+.toast.err{border-color:var(--red);color:var(--red);}
+.toast.info{border-color:var(--accent);color:var(--accent);}
+
+/* LOADER */
+.loader{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9000;gap:20px;}
+.loader-box{width:80px;height:80px;background:linear-gradient(135deg,var(--primary),var(--accent));border-radius:24px;display:flex;align-items:center;justify-content:center;animation:pulse 1.4s infinite;box-shadow:0 0 30px rgba(30,111,255,.3);}
+.loader-box span{font-family:var(--fh);font-size:36px;font-weight:800;color:#fff;}
+.loader p{color:var(--text2);font-size:13px;letter-spacing:2px;text-transform:uppercase;animation:fio 1.4s infinite;}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+@keyframes fio{0%,100%{opacity:.4}50%{opacity:1}}
+
+/* APP */
+.app{max-width:480px;margin:0 auto;padding-bottom:100px;}
+
+/* HEADER */
+.hdr{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;background:var(--card);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;}
+.hl{display:flex;align-items:center;gap:12px;}
+.hr{display:flex;align-items:center;gap:12px;}
+.ava{width:40px;height:40px;background:linear-gradient(135deg,var(--primary),var(--accent));border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--fh);font-weight:700;font-size:16px;color:#fff;cursor:pointer;}
+.wt{font-size:11px;color:var(--text2);}
+.ue{font-size:13px;color:var(--text);font-weight:500;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.vlogo{font-family:var(--fh);font-weight:800;font-size:20px;background:linear-gradient(135deg,var(--primary),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.lbtn{background:rgba(255,77,109,.1);border:1px solid rgba(255,77,109,.3);color:var(--red);padding:8px 12px;border-radius:10px;cursor:pointer;font-size:14px;}
+
+/* WALLET CARD */
+.wcard{margin:20px 20px 0;background:linear-gradient(135deg,#0d2151,#1a3a7a,#0d1f42);border-radius:24px;padding:28px 24px;position:relative;overflow:hidden;border:1px solid rgba(30,111,255,.25);box-shadow:0 8px 32px rgba(0,0,0,.4),0 0 20px rgba(30,111,255,.2);}
+.wc1,.wc2{position:absolute;border-radius:50%;opacity:.06;background:var(--accent);}
+.wc1{width:200px;height:200px;top:-60px;right:-60px;}
+.wc2{width:140px;height:140px;bottom:-50px;left:10px;}
+.wlbl{font-size:11px;color:rgba(255,255,255,.5);margin-bottom:8px;letter-spacing:1px;text-transform:uppercase;position:relative;}
+.wbal{font-family:var(--fh);font-size:38px;font-weight:800;margin-bottom:24px;color:#fff;position:relative;}
+.wbal .cu{font-size:18px;color:var(--accent);margin-right:4px;}
+.wrow{display:flex;justify-content:space-between;gap:16px;border-top:1px solid rgba(255,255,255,.1);padding-top:16px;position:relative;}
+.wlb{font-size:10px;color:rgba(255,255,255,.4);margin-bottom:4px;letter-spacing:1px;text-transform:uppercase;}
+.wvl{font-size:13px;font-weight:600;color:#fff;font-family:var(--fh);}
+.refcopy{color:var(--accent)!important;cursor:pointer;}
+
+/* TIMER */
+.tmr{background:var(--card);border:1px solid rgba(0,212,255,.2);border-radius:18px;padding:18px 20px;margin:16px 20px 0;}
+.tlbl{font-size:11px;color:var(--text2);letter-spacing:1px;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.tdot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:blink 1.5s infinite;display:inline-block;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.tdsp{display:flex;justify-content:center;gap:10px;}
+.tunit{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:10px 12px;min-width:52px;text-align:center;}
+.tnum{font-family:var(--fh);font-size:22px;font-weight:800;color:var(--accent);display:block;}
+.tlb{font-size:10px;color:var(--text2);letter-spacing:1px;}
+
+/* SECTION */
+.sec{margin:20px 20px 0;}
+.stitle{font-family:var(--fh);font-size:16px;font-weight:700;color:var(--text);margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+.stitle::before{content:'';width:3px;height:18px;background:linear-gradient(var(--primary),var(--accent));border-radius:3px;display:inline-block;}
+
+/* SERVICES */
+.sgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+.sitem{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:14px 8px;text-align:center;cursor:pointer;transition:transform .2s,border-color .2s;}
+.sitem:active{transform:scale(.93);}
+.sitem:hover{border-color:var(--primary);}
+.sitem p{font-size:10px;color:var(--text2);margin-top:8px;font-weight:500;}
+.sico{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto;font-size:16px;color:#fff;}
+.ic1{background:linear-gradient(135deg,#00e676,#00b248);}
+.ic2{background:linear-gradient(135deg,#ff4d6d,#cc0033);}
+.ic3{background:linear-gradient(135deg,#1e6fff,#0d4fd6);}
+.ic4{background:linear-gradient(135deg,#a855f7,#7c3aed);}
+.ic5{background:linear-gradient(135deg,#f4b942,#e07b00);}
+.ic6{background:linear-gradient(135deg,#00d4ff,#0099cc);}
+.ic7{background:linear-gradient(135deg,#ff6b35,#cc4400);}
+.ic8{background:linear-gradient(135deg,#ec4899,#9d174d);}
+
+/* STATS */
+.sgr{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;}
+.scard{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px;position:relative;overflow:hidden;}
+.scico{font-size:32px;opacity:.05;position:absolute;right:12px;bottom:12px;color:var(--accent);}
+.sclbl{font-size:11px;color:var(--text2);margin-bottom:8px;}
+.scval{font-family:var(--fh);font-size:20px;font-weight:700;color:var(--text);}
+.s1{border-left:3px solid var(--green);}
+.s2{border-left:3px solid var(--red);}
+.s3{border-left:3px solid var(--primary);}
+.s4{border-left:3px solid #a855f7;}
+
+/* PLANS */
+.plans{display:flex;flex-direction:column;gap:12px;}
+.pcard{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:20px;display:flex;align-items:center;justify-content:space-between;position:relative;overflow:hidden;transition:border-color .2s;}
+.pcard::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(var(--primary),var(--accent));}
+.pcard:hover{border-color:var(--primary);}
+.pinfo h4{font-family:var(--fh);font-size:16px;font-weight:700;color:var(--text);}
+.pinfo p{font-size:12px;color:var(--text2);margin-top:4px;}
+.pprofit{font-size:14px;color:var(--green)!important;font-weight:600;margin-top:6px!important;}
+.pbtn{padding:10px 18px;background:linear-gradient(135deg,var(--primary),#0d4fd6);color:#fff;border:none;border-radius:12px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;transition:opacity .2s;}
+.pbtn:disabled{opacity:.4;cursor:not-allowed;}
+.pbtn.act{background:linear-gradient(135deg,var(--green),#00b248);}
+
+/* TEAM */
+.tlist{display:flex;flex-direction:column;gap:10px;}
+.titem{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;display:flex;align-items:center;gap:12px;}
+.tava{width:40px;height:40px;background:linear-gradient(135deg,var(--primary),var(--accent));border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;color:#fff;}
+
+/* REWARD */
+.rwcard{background:linear-gradient(135deg,#1a2e5a,#0d1f42);border:1px solid rgba(244,185,66,.2);border-radius:18px;padding:28px 24px;text-align:center;}
+.rwico{font-size:44px;margin-bottom:14px;display:block;color:var(--gold);}
+.rwcard p{font-size:14px;line-height:1.7;color:var(--text2);}
+.rwcard strong{color:var(--gold);}
+.rwcode{display:inline-block;margin-top:18px;background:linear-gradient(135deg,var(--gold),#e07b00);color:#000;padding:10px 24px;border-radius:50px;cursor:pointer;font-weight:700;font-size:14px;font-family:var(--fh);}
+
+/* TX */
+.txlist{display:flex;flex-direction:column;gap:10px;}
+.txitem{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;animation:up .3s ease;}
+@keyframes up{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.txtype{font-size:14px;font-weight:600;color:var(--text);}
+.txmeta{font-size:11px;color:var(--text2);margin-top:3px;}
+.txamt{font-family:var(--fh);font-size:16px;font-weight:700;}
+.cr{color:var(--green);}
+.db{color:var(--red);}
+
+/* BADGE */
+.badge{display:inline-block;padding:4px 12px;border-radius:50px;font-size:11px;font-weight:600;}
+.bp{background:rgba(244,185,66,.15);color:var(--gold);border:1px solid rgba(244,185,66,.3);}
+.ba{background:rgba(0,230,118,.15);color:var(--green);border:1px solid rgba(0,230,118,.3);}
+.br{background:rgba(255,77,109,.15);color:var(--red);border:1px solid rgba(255,77,109,.3);}
+
+/* MODAL */
+.mover{position:fixed;inset:0;background:rgba(0,0,0,.75);display:flex;align-items:flex-end;justify-content:center;z-index:500;backdrop-filter:blur(4px);animation:fi .2s ease;}
+@keyframes fi{from{opacity:0}to{opacity:1}}
+.mbox{background:var(--card);border:1px solid var(--border);border-radius:24px 24px 0 0;padding:28px 24px 40px;width:100%;max-width:480px;animation:up .3s ease;}
+.mbox h3{font-family:var(--fh);font-size:18px;font-weight:700;margin-bottom:20px;color:var(--text);}
+.macts{display:flex;gap:10px;margin-top:16px;}
+.inp2{position:relative;display:flex;align-items:center;margin-bottom:12px;}
+.inp2 input{width:100%;padding:13px 14px 13px 42px;border:1.5px solid var(--border);border-radius:12px;font-family:var(--fb);font-size:14px;color:var(--text);background:var(--bg2);outline:none;transition:border-color .2s;}
+.inp2 input:focus{border-color:var(--primary);}
+.inp2 input::placeholder{color:#4a5a78;}
+.inp2 .ii{position:absolute;left:14px;color:var(--text2);font-size:14px;pointer-events:none;}
+.btn2{padding:14px;background:linear-gradient(135deg,#1e6fff,#0d4fd6);color:#fff;border:none;border-radius:12px;font-family:var(--fh);font-size:15px;font-weight:600;cursor:pointer;width:100%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(30,111,255,.4);}
+.btn3{padding:12px;background:var(--bg2);color:var(--text);border:1.5px solid var(--border);border-radius:12px;font-size:14px;cursor:pointer;width:100%;}
+
+/* PROFILE */
+.pava{width:80px;height:80px;background:linear-gradient(135deg,var(--primary),var(--accent));border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--fh);font-size:32px;font-weight:800;color:#fff;margin:0 auto 20px;box-shadow:0 0 30px rgba(30,111,255,.3);}
+.prow{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:10px;}
+.prow .lb{font-size:11px;color:var(--text2);margin-bottom:4px;}
+.prow .vl{font-size:14px;font-weight:600;color:var(--text);}
+
+/* WALLET METHOD */
+.wmlist{display:flex;flex-direction:column;gap:10px;margin-bottom:16px;}
+.wmbtn{padding:14px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;color:var(--text);font-family:var(--fb);font-size:14px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:12px;transition:border-color .2s;width:100%;}
+.wmbtn:hover,.wmbtn.sel{border-color:var(--primary);background:rgba(30,111,255,.1);}
+.wmbtn i{font-size:18px;color:var(--primary);}
+
+/* DEPOSIT INFO */
+.dinfo{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:14px;font-size:13px;color:var(--text2);line-height:1.8;}
+
+/* BOTTOM NAV */
+.bnav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:var(--card);border-top:1px solid var(--border);display:flex;justify-content:space-around;padding:10px 0 20px;z-index:200;}
+.nitem{display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;padding:6px 14px;border-radius:12px;color:var(--text2);transition:color .2s;}
+.nitem.on{color:var(--primary);}
+.nitem i{font-size:18px;}
+.nitem span{font-size:10px;font-weight:500;}
+
+/* EMPTY */
+.empty{text-align:center;padding:48px 20px;color:var(--text2);}
+.empty i{font-size:40px;margin-bottom:14px;display:block;opacity:.3;}
+.empty p{font-size:14px;}
+</style>
 </head>
-<body class="dash-body">
+<body>
 <div id="toast" class="toast"></div>
+<div id="loader" class="loader"><div class="loader-box"><span>V</span></div><p>Loading...</p></div>
 
-<div id="loadingScreen" class="loading-screen">
-  <div class="loader-logo"><span class="logo-v">V</span></div>
-  <p>Loading...</p>
-</div>
-
-<div id="dashApp" class="dash-app hidden">
-
+<div id="app" class="app hidden">
   <!-- HEADER -->
-  <header class="dash-header">
-    <div class="header-left">
-      <div class="avatar-circle" id="userAvatar" onclick="openModal('profileModal')">U</div>
-      <div>
-        <p class="welcome-text">Welcome back</p>
-        <p class="user-email-small" id="headerEmail">—</p>
-      </div>
+  <header class="hdr">
+    <div class="hl">
+      <div class="ava" id="ava" onclick="openM('mProfile')">U</div>
+      <div><p class="wt">Welcome back</p><p class="ue" id="uname">—</p></div>
     </div>
-    <div class="header-right">
-      <span class="velaro-logo-small">Velaro</span>
-      <button class="logout-btn" onclick="logoutUser()"><i class="fa fa-sign-out-alt"></i></button>
+    <div class="hr">
+      <span class="vlogo">Velaro</span>
+      <button class="lbtn" onclick="doLogout()"><i class="fa fa-sign-out-alt"></i></button>
     </div>
   </header>
 
-  <!-- WALLET CARD -->
-  <div class="wallet-card">
-    <div class="wallet-bg-circle c1"></div>
-    <div class="wallet-bg-circle c2"></div>
-    <p class="wallet-label">Total Balance</p>
-    <h2 class="wallet-balance"><span>Rs</span><span id="walletBalance">0</span></h2>
-    <div class="wallet-info-row">
-      <div>
-        <p class="winfo-label">User ID</p>
-        <p class="winfo-val" id="walletUID">—</p>
-      </div>
-      <div>
-        <p class="winfo-label">Referral Code</p>
-        <p class="winfo-val referral-copy" id="walletRef" onclick="copyRef()">— <i class="fa fa-copy" style="font-size:11px"></i></p>
-      </div>
+  <!-- WALLET -->
+  <div class="wcard">
+    <div class="wc1"></div><div class="wc2"></div>
+    <p class="wlbl">Total Balance</p>
+    <h2 class="wbal"><span class="cu" id="curSym">Rs</span><span id="wbal">0</span></h2>
+    <div class="wrow">
+      <div><p class="wlb">User ID</p><p class="wvl" id="wuid">—</p></div>
+      <div><p class="wlb">Referral Code</p><p class="wvl refcopy" id="wref" onclick="copyRef()">— <i class="fa fa-copy" style="font-size:11px"></i></p></div>
     </div>
   </div>
 
-  <!-- PROFIT TIMER -->
-  <div class="profit-timer-card">
-    <p class="profit-timer-label"><span class="profit-dot"></span> Next Daily Profit In</p>
-    <div class="profit-timer-display">
-      <div class="timer-unit"><span class="timer-num" id="timerH">00</span><span class="timer-label">HRS</span></div>
-      <div class="timer-unit"><span class="timer-num" id="timerM">00</span><span class="timer-label">MIN</span></div>
-      <div class="timer-unit"><span class="timer-num" id="timerS">00</span><span class="timer-label">SEC</span></div>
+  <!-- TIMER -->
+  <div class="tmr">
+    <p class="tlbl"><span class="tdot"></span> Next Daily Profit In</p>
+    <div class="tdsp">
+      <div class="tunit"><span class="tnum" id="th">00</span><span class="tlb">HRS</span></div>
+      <div class="tunit"><span class="tnum" id="tm">00</span><span class="tlb">MIN</span></div>
+      <div class="tunit"><span class="tnum" id="ts">00</span><span class="tlb">SEC</span></div>
     </div>
   </div>
 
-  <!-- QUICK SERVICES -->
-  <section class="section-block">
-    <h3 class="section-title">Quick Services</h3>
-    <div class="services-grid">
-      <div class="service-item" onclick="openModal('depositModal')">
-        <div class="svc-icon deposit-icon"><i class="fa fa-plus-circle"></i></div>
-        <p>Deposit</p>
-      </div>
-      <div class="service-item" onclick="openModal('withdrawModal')">
-        <div class="svc-icon withdraw-icon"><i class="fa fa-minus-circle"></i></div>
-        <p>Withdraw</p>
-      </div>
-      <div class="service-item" onclick="showSection('plansSection')">
-        <div class="svc-icon plan-icon"><i class="fa fa-chart-line"></i></div>
-        <p>My Plans</p>
-      </div>
-      <div class="service-item" onclick="showSection('teamSection')">
-        <div class="svc-icon team-icon"><i class="fa fa-users"></i></div>
-        <p>Team</p>
-      </div>
-      <div class="service-item" onclick="showSection('rewardsSection')">
-        <div class="svc-icon reward-icon"><i class="fa fa-gift"></i></div>
-        <p>Rewards</p>
-      </div>
-      <div class="service-item" onclick="showSection('txSection')">
-        <div class="svc-icon tx-icon"><i class="fa fa-history"></i></div>
-        <p>History</p>
-      </div>
-      <div class="service-item" onclick="openModal('walletModal')">
-        <div class="svc-icon support-icon"><i class="fa fa-wallet"></i></div>
-        <p>Wallet</p>
-      </div>
-      <div class="service-item" onclick="openModal('profileModal')">
-        <div class="svc-icon profile-icon-svc"><i class="fa fa-user"></i></div>
-        <p>Profile</p>
-      </div>
+  <!-- SERVICES -->
+  <section class="sec">
+    <h3 class="stitle">Quick Services</h3>
+    <div class="sgrid">
+      <div class="sitem" onclick="openM('mDeposit')"><div class="sico ic1"><i class="fa fa-plus-circle"></i></div><p>Deposit</p></div>
+      <div class="sitem" onclick="openM('mWithdraw')"><div class="sico ic2"><i class="fa fa-minus-circle"></i></div><p>Withdraw</p></div>
+      <div class="sitem" onclick="showSec('secPlans')"><div class="sico ic3"><i class="fa fa-chart-line"></i></div><p>Plans</p></div>
+      <div class="sitem" onclick="showSec('secTeam')"><div class="sico ic4"><i class="fa fa-users"></i></div><p>Team</p></div>
+      <div class="sitem" onclick="showSec('secReward')"><div class="sico ic5"><i class="fa fa-gift"></i></div><p>Rewards</p></div>
+      <div class="sitem" onclick="showSec('secTx')"><div class="sico ic6"><i class="fa fa-history"></i></div><p>History</p></div>
+      <div class="sitem" onclick="openM('mWallet')"><div class="sico ic7"><i class="fa fa-wallet"></i></div><p>Wallet</p></div>
+      <div class="sitem" onclick="openM('mProfile')"><div class="sico ic8"><i class="fa fa-user"></i></div><p>Profile</p></div>
     </div>
   </section>
 
   <!-- STATS -->
-  <section class="section-block">
-    <h3 class="section-title">My Stats</h3>
-    <div class="stats-grid">
-      <div class="stat-card s1">
-        <i class="fa fa-arrow-down stat-icon"></i>
-        <p class="stat-label">Total Deposit</p>
-        <p class="stat-val" id="statDeposit">Rs 0</p>
-      </div>
-      <div class="stat-card s2">
-        <i class="fa fa-arrow-up stat-icon"></i>
-        <p class="stat-label">Total Withdraw</p>
-        <p class="stat-val" id="statWithdraw">Rs 0</p>
-      </div>
-      <div class="stat-card s3">
-        <i class="fa fa-coins stat-icon"></i>
-        <p class="stat-label">Total Profit</p>
-        <p class="stat-val" id="statProfit">Rs 0</p>
-      </div>
-      <div class="stat-card s4">
-        <i class="fa fa-users stat-icon"></i>
-        <p class="stat-label">Team Earnings</p>
-        <p class="stat-val" id="statTeam">Rs 0</p>
-      </div>
+  <section class="sec">
+    <h3 class="stitle">My Stats</h3>
+    <div class="sgr">
+      <div class="scard s1"><i class="fa fa-arrow-down scico"></i><p class="sclbl">Total Deposit</p><p class="scval" id="stDep">0</p></div>
+      <div class="scard s2"><i class="fa fa-arrow-up scico"></i><p class="sclbl">Total Withdraw</p><p class="scval" id="stWith">0</p></div>
+      <div class="scard s3"><i class="fa fa-coins scico"></i><p class="sclbl">Total Profit</p><p class="scval" id="stProfit">0</p></div>
+      <div class="scard s4"><i class="fa fa-users scico"></i><p class="sclbl">Team Earnings</p><p class="scval" id="stTeam">0</p></div>
     </div>
   </section>
 
   <!-- PLANS -->
-  <section class="section-block" id="plansSection">
-    <h3 class="section-title">Investment Plans</h3>
-    <div id="plansList" class="plans-list"></div>
+  <section class="sec" id="secPlans">
+    <h3 class="stitle">Investment Plans</h3>
+    <div class="plans" id="plansList"></div>
   </section>
 
   <!-- TEAM -->
-  <section class="section-block hidden" id="teamSection">
-    <h3 class="section-title">My Team</h3>
-    <div id="teamList" class="team-list"></div>
+  <section class="sec hidden" id="secTeam">
+    <h3 class="stitle">My Team</h3>
+    <div class="tlist" id="teamList"></div>
   </section>
 
-  <!-- REWARDS -->
-  <section class="section-block hidden" id="rewardsSection">
-    <h3 class="section-title">Rewards</h3>
-    <div class="reward-card">
-      <i class="fa fa-gift reward-big-icon"></i>
-      <p>Invite friends using your referral code and earn <strong>Rs 100</strong> per referral.</p>
-      <p class="reward-code" id="rewardCode" onclick="copyRef()">Copy My Code</p>
+  <!-- REWARD -->
+  <section class="sec hidden" id="secReward">
+    <h3 class="stitle">Rewards</h3>
+    <div class="rwcard">
+      <i class="fa fa-gift rwico"></i>
+      <p>Invite friends using your referral code and earn <strong id="rwAmt">Rs 100</strong> per referral.</p>
+      <p class="rwcode" id="rwCode" onclick="copyRef()">Copy My Code</p>
     </div>
   </section>
 
   <!-- TRANSACTIONS -->
-  <section class="section-block hidden" id="txSection">
-    <h3 class="section-title">Transaction History</h3>
-    <div id="txList" class="tx-list"></div>
+  <section class="sec hidden" id="secTx">
+    <h3 class="stitle">Transaction History</h3>
+    <div class="txlist" id="txList"></div>
   </section>
-
 </div>
 
 <!-- MODALS -->
-
 <!-- DEPOSIT -->
-<div id="depositModal" class="modal-overlay hidden">
-  <div class="modal-box">
+<div id="mDeposit" class="mover hidden">
+  <div class="mbox">
     <h3><i class="fa fa-plus-circle" style="color:var(--green);margin-right:8px"></i>Deposit Funds</h3>
-    <div id="depositInfo" style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:14px;font-size:13px;color:var(--text2);line-height:1.7;"></div>
-    <div class="input-group">
-      <i class="fa fa-rupee-sign input-icon"></i>
-      <input type="number" id="depositAmount" placeholder="Enter amount (min Rs 100)"/>
-    </div>
-    <div class="input-group">
-      <i class="fa fa-university input-icon"></i>
-      <input type="text" id="depositMethod" placeholder="Payment Method (EasyPaisa/JazzCash)"/>
-    </div>
-    <div class="input-group">
-      <i class="fa fa-receipt input-icon"></i>
-      <input type="text" id="depositTxId" placeholder="Transaction ID"/>
-    </div>
-    <div class="modal-actions">
-      <button class="btn-secondary" onclick="closeModal('depositModal')">Cancel</button>
-      <button class="btn-primary" onclick="submitDeposit()">Submit</button>
-    </div>
+    <div class="dinfo" id="dinfo">Loading payment details...</div>
+    <div class="inp2"><i class="fa fa-rupee-sign ii"></i><input type="number" id="dAmt" placeholder="Amount (min 100)"/></div>
+    <div class="inp2"><i class="fa fa-university ii"></i><input type="text" id="dMethod" placeholder="Payment Method Used"/></div>
+    <div class="inp2"><i class="fa fa-receipt ii"></i><input type="text" id="dTxId" placeholder="Transaction ID / Screenshot Ref"/></div>
+    <div class="macts"><button class="btn3" onclick="closeM('mDeposit')">Cancel</button><button class="btn2" onclick="doDeposit()">Submit</button></div>
   </div>
 </div>
 
 <!-- WITHDRAW -->
-<div id="withdrawModal" class="modal-overlay hidden">
-  <div class="modal-box">
+<div id="mWithdraw" class="mover hidden">
+  <div class="mbox">
     <h3><i class="fa fa-minus-circle" style="color:var(--red);margin-right:8px"></i>Withdraw Funds</h3>
-    <div class="input-group">
-      <i class="fa fa-rupee-sign input-icon"></i>
-      <input type="number" id="withdrawAmount" placeholder="Enter amount (min Rs 200)"/>
-    </div>
-    <div class="input-group">
-      <i class="fa fa-mobile-alt input-icon"></i>
-      <input type="text" id="withdrawAccount" placeholder="Account Number"/>
-    </div>
-    <div class="input-group">
-      <i class="fa fa-university input-icon"></i>
-      <input type="text" id="withdrawMethod" placeholder="Method (EasyPaisa/JazzCash)"/>
-    </div>
-    <div class="modal-actions">
-      <button class="btn-secondary" onclick="closeModal('withdrawModal')">Cancel</button>
-      <button class="btn-primary" onclick="submitWithdraw()">Submit</button>
-    </div>
+    <div class="inp2"><i class="fa fa-rupee-sign ii"></i><input type="number" id="wdAmt" placeholder="Amount (min 200)"/></div>
+    <div class="inp2"><i class="fa fa-mobile-alt ii"></i><input type="text" id="wdAcc" placeholder="Account Number"/></div>
+    <div class="inp2"><i class="fa fa-university ii"></i><input type="text" id="wdMethod" placeholder="Method (EasyPaisa/JazzCash/Bank)"/></div>
+    <div class="macts"><button class="btn3" onclick="closeM('mWithdraw')">Cancel</button><button class="btn2" onclick="doWithdraw()">Submit</button></div>
   </div>
 </div>
 
 <!-- PROFILE -->
-<div id="profileModal" class="modal-overlay hidden">
-  <div class="modal-box">
+<div id="mProfile" class="mover hidden">
+  <div class="mbox">
     <h3>My Profile</h3>
-    <div class="profile-avatar-big" id="profileAvatar">U</div>
-    <div class="profile-info-row">
-      <div class="label">Email</div>
-      <div class="val" id="profileEmail">—</div>
-    </div>
-    <div class="profile-info-row">
-      <div class="label">User ID</div>
-      <div class="val" id="profileUID">—</div>
-    </div>
-    <div class="profile-info-row">
-      <div class="label">Referral Code</div>
-      <div class="val" id="profileRef">—</div>
-    </div>
-    <div class="profile-info-row">
-      <div class="label">Member Since</div>
-      <div class="val" id="profileDate">—</div>
-    </div>
-    <div class="input-group" style="margin-top:14px">
-      <i class="fa fa-user input-icon"></i>
-      <input type="text" id="profileName" placeholder="Set Display Name"/>
-    </div>
-    <div class="modal-actions">
-      <button class="btn-secondary" onclick="closeModal('profileModal')">Close</button>
-      <button class="btn-primary" onclick="saveProfile()">Save Name</button>
-    </div>
-  </div>
-</div>
-
-<!-- WALLET BIND -->
-<div id="walletModal" class="modal-overlay hidden">
-  <div class="modal-box">
-    <h3><i class="fa fa-wallet" style="color:var(--primary);margin-right:8px"></i>Bind Wallet</h3>
-    <p style="font-size:13px;color:var(--text2);margin-bottom:16px;">Select your payment method and enter account details.</p>
-    <div class="wallet-methods">
-      <button class="wallet-method-btn" id="wm-easypaisa" onclick="selectWalletMethod('EasyPaisa')">
-        <i class="fa fa-mobile-alt"></i> EasyPaisa
-      </button>
-      <button class="wallet-method-btn" id="wm-jazzcash" onclick="selectWalletMethod('JazzCash')">
-        <i class="fa fa-sim-card"></i> JazzCash
-      </button>
-      <button class="wallet-method-btn" id="wm-bank" onclick="selectWalletMethod('Bank')">
-        <i class="fa fa-university"></i> Bank Transfer
-      </button>
-    </div>
-    <div class="input-group">
-      <i class="fa fa-hashtag input-icon"></i>
-      <input type="text" id="walletNumber" placeholder="Account / IBAN Number"/>
-    </div>
-    <div class="input-group" style="margin-top:10px">
-      <i class="fa fa-user input-icon"></i>
-      <input type="text" id="walletName" placeholder="Account Holder Name"/>
-    </div>
-    <div class="modal-actions">
-      <button class="btn-secondary" onclick="closeModal('walletModal')">Cancel</button>
-      <button class="btn-primary" onclick="saveWallet()">Save Wallet</button>
-    </div>
-  </div>
-</div>
-
-<script type="module" src="app.js"></script>
-</body>
-          </html>
-                                                                         
+    <div class="pava" id="pava">U</div>
+    <div class="prow"><div class="lb">Email</div><div class="vl" id="pEmail">—</div></div>
+    <div class="prow"><div class="lb">User ID</div><div class="vl" id="pUID">—</div></div>
+    <div class="prow"><div class="lb">Referral Code</div><div class="vl" id="pRef">—</div></div>
+    <div class="prow"><div class="lb">Balance</div><div class="vl" id="pBal" style="color:var(--green)">—</div></div>
+    <div class="prow"><div class=
