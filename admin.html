@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Velaro Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+:root{--bg:#080e1e;--card:#0f1729;--card2:#131d35;--border:rgba(255,255,255,.07);--p:#1e6fff;--a:#00d4ff;--g:#00e676;--r:#ff4d6d;--gold:#f4b942;--tx:#e8edf5;--tx2:#8a9bb8;--inp:#070d1c;--fh:'Syne',sans-serif;--fb:'DM Sans',sans-serif;}
+html,body{min-height:100vh;font-family:var(--fb);color:var(--tx);background:var(--bg);}
+.hidden{display:none!important;}
+.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-80px);background:var(--card2);color:var(--tx);padding:12px 24px;border-radius:50px;font-size:14px;border:1px solid var(--border);z-index:9999;transition:transform .35s cubic-bezier(.34,1.56,.64,1);white-space:nowrap;max-width:90vw;text-align:center;}
+.toast.show{transform:translateX(-50%) translateY(0);}
+.toast.ok{border-color:rgba(0,230,118,.4);color:var(--g);}
+.toast.err{border-color:rgba(255,77,109,.4);color:var(--r);}
+.toast.info{border-color:rgba(0,212,255,.4);color:var(--a);}
+.loader{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9000;gap:16px;}
+.lbox{width:72px;height:72px;background:linear-gradient(135deg,var(--p),var(--a));border-radius:20px;display:flex;align-items:center;justify-content:center;}
+.lbox span{font-family:var(--fh);font-size:32px;font-weight:800;color:#fff;}
+.ltxt{color:var(--tx2);font-size:12px;letter-spacing:2px;text-transform:uppercase;}
+.app{max-width:640px;margin:0 auto;padding-bottom:40px;}
+.hdr{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;background:var(--card);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;}
+.brand{display:flex;align-items:center;gap:10px;}
+.bico{width:36px;height:36px;background:linear-gradient(135deg,var(--p),var(--a));border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:var(--fh);font-size:17px;color:#fff;font-weight:800;}
+.bname{font-family:var(--fh);font-size:17px;font-weight:700;background:linear-gradient(135deg,#fff,var(--a));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.lbtn{background:rgba(255,77,109,.1);border:1px solid rgba(255,77,109,.2);color:var(--r);padding:7px 12px;border-radius:10px;cursor:pointer;font-size:13px;font-family:var(--fb);}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding:16px;}
+.sc{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px;text-align:center;}
+.sc i{font-size:20px;color:var(--p);margin-bottom:10px;display:block;}
+.scn{font-family:var(--fh);font-size:20px;font-weight:800;color:var(--tx);}
+.scl{font-size:11px;color:var(--tx2);margin-top:4px;}
+.tabs{display:flex;gap:7px;padding:0 16px 14px;overflow-x:auto;}
+.tabs::-webkit-scrollbar{display:none;}
+.tab{padding:9px 16px;border:1px solid var(--border);background:var(--card);border-radius:50px;font-family:var(--fb);font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;color:var(--tx2);transition:all .2s;}
+.tab.on{background:var(--p);color:#fff;border-color:var(--p);}
+.sec{padding:0 16px;}
+.stit{font-family:var(--fh);font-size:15px;font-weight:700;color:var(--tx);margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+.stit::before{content:'';width:3px;height:17px;background:linear-gradient(var(--p),var(--a));border-radius:3px;display:inline-block;}
+.list{display:flex;flex-direction:column;gap:10px;}
+.acard{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px;}
+.arow{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;}
+.ainfo p{font-size:12px;color:var(--tx2);margin-top:3px;line-height:1.6;}
+.ainfo strong{font-size:14px;color:var(--tx);font-weight:600;}
+.aacts{display:flex;gap:8px;flex-wrap:wrap;}
+.bappr{padding:8px 16px;background:rgba(0,230,118,.1);color:var(--g);border:1px solid rgba(0,230,118,.25);border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--fb);}
+.brej{padding:8px 16px;background:rgba(255,77,109,.1);color:var(--r);border:1px solid rgba(255,77,109,.25);border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--fb);}
+.bblk{padding:8px 16px;background:rgba(138,155,184,.08);color:var(--tx2);border:1px solid var(--border);border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--fb);}
+.binfo{padding:8px 16px;background:rgba(30,111,255,.1);color:var(--p);border:1px solid rgba(30,111,255,.25);border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--fb);}
+.badge{display:inline-block;padding:4px 12px;border-radius:50px;font-size:11px;font-weight:600;}
+.bp{background:rgba(244,185,66,.1);color:var(--gold);border:1px solid rgba(244,185,66,.25);}
+.ba{background:rgba(0,230,118,.1);color:var(--g);border:1px solid rgba(0,230,118,.25);}
+.br2{background:rgba(255,77,109,.1);color:var(--r);border:1px solid rgba(255,77,109,.25);}
+.fc{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:10px;margin-bottom:14px;}
+.fc h4{font-family:var(--fh);font-size:14px;font-weight:700;color:var(--tx);}
+.ig{position:relative;}
+.ig input{width:100%;padding:12px 14px 12px 42px;border:1.5px solid rgba(255,255,255,.08);border-radius:12px;font-family:var(--fb);font-size:14px;color:#e8edf5;background:var(--inp);outline:none;-webkit-text-fill-color:#e8edf5;caret-color:#e8edf5;transition:border-color .2s;}
+.ig input:-webkit-autofill,.ig input:-webkit-autofill:focus{-webkit-box-shadow:0 0 0 9999px var(--inp) inset!important;-webkit-text-fill-color:#e8edf5!important;}
+.ig input:focus{border-color:rgba(30,111,255,.5);}
+.ig input::placeholder{color:rgba(138,155,184,.45);}
+.ii{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--tx2);font-size:13px;pointer-events:none;}
+.btn{padding:13px;background:linear-gradient(135deg,var(--p),#0a8fd1);color:#fff;border:none;border-radius:12px;font-family:var(--fh);font-size:14px;font-weight:700;cursor:pointer;width:100%;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 16px rgba(30,111,255,.3);}
+.mover{position:fixed;inset:0;background:rgba(0,0,0,.75);display:flex;align-items:flex-end;justify-content:center;z-index:500;backdrop-filter:blur(6px);}
+.mbox{background:#0f1729;border:1px solid var(--border);border-radius:24px 24px 0 0;padding:26px 20px 40px;width:100%;max-width:640px;}
+.mbox h3{font-family:var(--fh);font-size:18px;font-weight:700;margin-bottom:16px;color:var(--tx);}
+.macts{display:flex;gap:10px;margin-top:14px;}
+.ig2{position:relative;margin-bottom:10px;}
+.ig2 input{width:100%;padding:12px 14px 12px 42px;border:1.5px solid rgba(255,255,255,.08);border-radius:12px;font-family:var(--fb);font-size:14px;color:#e8edf5;background:var(--inp);outline:none;-webkit-text-fill-color:#e8edf5;transition:border-color .2s;}
+.ig2 input:focus{border-color:rgba(30,111,255,.5);}
+.ig2 input::placeholder{color:rgba(138,155,184,.45);}
+.ig2 .ii{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--tx2);font-size:13px;pointer-events:none;}
+.btn3{padding:12px;background:rgba(255,255,255,.04);color:var(--tx);border:1px solid var(--border);border-radius:12px;font-size:14px;cursor:pointer;width:100%;}
+.prow{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:8px;}
+.prow .lb{font-size:11px;color:var(--tx2);margin-bottom:3px;}
+.prow .vv{font-size:14px;font-weight:600;color:var(--tx);}
+.mrow{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.04);gap:10px;}
+.mrow:last-child{border-bottom:none;}
+.curtog{display:flex;gap:8px;margin-bottom:12px;}
+.ctbtn{padding:10px 20px;border:1px solid var(--border);background:var(--card2);border-radius:12px;color:var(--tx2);font-family:var(--fb);font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;}
+.ctbtn.on{background:var(--p);color:#fff;border-color:var(--p);}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--g);display:inline-block;box-shadow:0 0 5px var(--g);margin-right:7px;}
+.empty{text-align:center;padding:44px 20px;color:var(--tx2);}
+.empty i{font-size:36px;margin-bottom:12px;display:block;opacity:.2;}
+.empty p{font-size:14px;}
+</style>
+</head>
+<body>
+<div id="t" class="toast"></div>
+<div id="loader" class="loader"><div class="lbox"><span>V</span></div><p class="ltxt">Admin Panel</p></div>
+<div id="adm" class="app hidden">
+  <header class="hdr">
+    <div class="brand"><div class="bico">V</div><span class="bname">Velaro Admin</span></div>
+    <button class="lbtn" onclick="doLogout()"><i class="fa fa-sign-out-alt"></i> Logout</button>
+  </header>
+  <div class="stats">
+    <div class="sc"><i class="fa fa-users"></i><p class="scn" id="asU">0</p><p class="scl">Total Users</p></div>
+    <div class="sc"><i class="fa fa-arrow-down"></i><p class="scn" id="asD">0</p><p class="scl">Deposits</p></div>
+    <div class="sc"><i class="fa fa-arrow-up"></i><p class="scn" id="asW">0</p><p class="scl">Withdraws</p></div>
+    <div class="sc"><i class="fa fa-coins"></i><p class="scn" id="asP">0</p><p class="scl">Profit Paid</p></div>
+  </div>
+  <div class="tabs">
+    <button class="tab on" onclick="aTab('Deposits',this)">Deposits</button>
+    <button class="tab" onclick="aTab('Withdraws',this)">Withdraws</button>
+    <button class="tab" onclick="aTab('Users',this)">Users</button>
+    <button class="tab" onclick="aTab('Plans',this)">Plans</button>
+    <button class="tab" onclick="aTab('Settings',this)">Settings</button>
+  </div>
+  <div id="secDeposits" class="sec"><h3 class="stit">Pending Deposits</h3><div class="list" id="depList"></div></div>
+  <div id="secWithdraws" class="sec hidden"><h3 class="stit">Pending Withdrawals</h3><div class="list" id="wdList"></div></div>
+  <div id="secUsers" class="sec hidden"><h3 class="stit">All Users</h3><div class="list" id="uList"></div></div>
+  <div id="secPlans" class="sec hidden">
+    <h3 class="stit">Manage Plans</h3>
+    <div class="fc">
+      <h4><i class="fa fa-plus" style="color:var(--p);margin-right:6px"></i>Add New Plan</h4>
+      <div class="ig"><input type="text" id="pNm" placeholder="Plan Name"/><i class="fa fa-tag ii"></i></div>
+      <div class="ig"><input type="number" id="pAmt" placeholder="Investment Amount"/><i class="fa fa-rupee-sign ii"></i></div>
+      <div class="ig"><input type="number" id="pProfit" placeholder="Daily Profit"/><i class="fa fa-coins ii"></i></div>
+      <div class="ig"><input type="number" id="pDays" placeholder="Duration (Days)"/><i class="fa fa-calendar ii"></i></div>
+      <button class="btn" onclick="addPlan()"><i class="fa fa-plus"></i> Add Plan</button>
+    </div>
+    <div class="list" id="planList"></div>
+  </div>
+  <div id="secSettings" class="sec hidden">
+    <h3 class="stit">Settings</h3>
+    <div class="fc">
+      <h4><i class="fa fa-globe" style="color:var(--gold);margin-right:7px"></i>App Currency</h4>
+      <div class="curtog"><button class="ctbtn on" id="cPKR" onclick="selCur('PKR')">🇵🇰 PKR</button><button class="ctbtn" id="cUSD" onclick="selCur('USD')">🇺🇸 USD</button></div>
+      <button class="btn" onclick="saveCur()"><i class="fa fa-save"></i> Save Currency</button>
+    </div>
+    <div class="fc">
+      <h4><i class="fa fa-coins" style="color:var(--gold);margin-right:7px"></i>Daily Profit</h4>
+      <p style="font-size:13px;color:var(--tx2);margin-bottom:12px"><span class="dot"></span>Distributes profit to all active plan holders. Each user receives once per day.</p>
+      <button class="btn" onclick="runProfit()"><i class="fa fa-play"></i> Run Profit Now</button>
+    </div>
+    <div class="fc">
+      <h4><i class="fa fa-university" style="color:var(--p);margin-right:7px"></i>Deposit Accounts</h4>
+      <p style="font-size:12px;color:var(--tx2);margin-bottom:14px">Shown to users on deposit screen.</p>
+      <div class="mrow"><div><p style="font-size:14px;font-weight:500;color:var(--tx)">EasyPaisa</p><p style="font-size:12px;color:var(--tx2);margin-top:2px" id="ep-d">Not set</p></div><button class="binfo" onclick="editDep('EasyPaisa')">Edit</button></div>
+      <div class="mrow"><div><p style="font-size:14px;font-weight:500;color:var(--tx)">JazzCash</p><p style="font-size:12px;color:var(--tx2);margin-top:2px" id="jc-d">Not set</p></div><button class="binfo" onclick="editDep('JazzCash')">Edit</button></div>
+      <div class="mrow"><div><p style="font-size:14px;font-weight:500;color:var(--tx)">Bank</p><p style="font-size:12px;color:var(--tx2);margin-top:2px" id="bk-d">Not set</p></div><button class="binfo" onclick="editDep('Bank')">Edit</button></div>
+      <div class="mrow"><div><p style="font-size:14px;font-weight:500;color:var(--tx)">USD Wire</p><p style="font-size:12px;color:var(--tx2);margin-top:2px" id="ud-d">Not set</p></div><button class="binfo" onclick="editDep('USD')">Edit</button></div>
+    </div>
+    <div class="fc">
+      <h4><i class="fa fa-hand-holding-usd" style="color:var(--g);margin-right:7px"></i>Manual Balance</h4>
+      <div class="ig"><input type="text" id="crEmail" placeholder="User Email"/><i class="fa fa-envelope ii"></i></div>
+      <div class="ig" style="margin-top:8px"><input type="number" id="crAmt" placeholder="Amount (+ add / - deduct)"/><i class="fa fa-rupee-sign ii"></i></div>
+      <button class="btn" style="margin-top:4px" onclick="manualCredit()"><i class="fa fa-check"></i> Apply</button>
+    </div>
+  </div>
+</div>
+<div id="mDep" class="mover hidden">
+  <div class="mbox">
+    <h3 id="mDepTit">Edit Method</h3>
+    <div class="ig2"><input type="text" id="dmNum" placeholder="Account Number / IBAN"/><i class="fa fa-hashtag ii"></i></div>
+    <div class="ig2"><input type="text" id="dmNm" placeholder="Account Holder Name"/><i class="fa fa-user ii"></i></div>
+    <div class="macts"><button class="btn3" onclick="closeM('mDep')">Cancel</button><button class="btn" onclick="saveDepM()">Save</button></div>
+  </div>
+</div>
+<div id="mUser" class="mover hidden">
+  <div class="mbox">
+    <h3>User Details</h3>
+    <div id="uDetail"></div>
+    <div class="macts"><button class="btn3" onclick="closeM('mUser')">Close</button></div>
+  </div>
+</div>
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import{getAuth,signOut,onAuthStateChanged}from"https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import{getFirestore,doc,getDoc,setDoc,updateDoc,addDoc,deleteDoc,collection,query,where,getDocs,orderBy,serverTimestamp,increment}from"https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+const FB={apiKey:"AIzaSyAicy4ym0omYMS5te0BXsR15d7jTrcydak",authDomain:"velaro-c487e.firebaseapp.com",projectId:"velaro-c487e",storageBucket:"velaro-c487e.firebasestorage.app",messagingSenderId:"394100524704",appId:"1:394100524704:web:a44d395c404d6f6eb2abc5"};
+const app=initializeApp(FB);const auth=getAuth(app);const db=getFirestore(app);
+const BASE="/Velaro/";let EM="",SC="PKR";
+function toast(m,t=""){const el=document.getElementById("t");el.textContent=m;el.className="toast show "+t;setTimeout(()=>el.className="toast",3500);}
+function fmt(ts){if(!ts)return"—";const d=ts.toDate?ts.toDate():new Date(ts);return d.toLocaleDateString("en-PK",{day:"2-digit",month:"short",year:"numeric"});}
+function sym(c){return c==="USD"?"$":"Rs";}
+window.openM=id=>document.getElementById(id).classList.remove("hidden");
+window.closeM=id=>document.getElementById(id).classList.add("hidden");
+window.doLogout=async function(){await signOut(auth);window.location.replace(BASE+"index.html");};
+window.aTab=function(tab,btn){document.querySelectorAll(".tab").forEach(b=>b.classList.remove("on"));document.querySelectorAll(".sec").forEach(s=>s.classList.add("hidden"));btn.classList.add("on");document.getElementById("sec"+tab).classList.remove("hidden");if(tab==="Deposits")loadDeps();else if(tab==="Withdraws")loadWds();else if(tab==="Users")loadUsers();else if(tab==="Plans")loadPlans();else if(tab==="Settings"){loadDepSettings();loadCurSet();}};
+async function getCur(){try{const s=await getDoc(doc(db,"settings","app"));return s.exists()?s.data().currency||"PKR":"PKR";}catch(e){return"PKR";}}
+onAuthStateChanged(auth,async user=>{
+  if(!user)return window.location.replace(BASE+"index.html");
+  try{
+    const s=await getDoc(doc(db,"users",user.uid));
+    if(!s.exists()||s.data().role!=="admin"){toast("Access denied","err");setTimeout(()=>window.location.replace(BASE+"dashboard.html"),1500);return;}
+    document.getElementById("loader").classList.add("hidden");
+    document.getElementById("adm").classList.remove("hidden");
+    loadStats();loadDeps();
+  }catch(e){toast("Connection error","err");}
+});
+async function loadStats(){const s=await getDocs(collection(db,"users"));let td=0,tw=0,tp=0;s.forEach(d=>{const u=d.data();td+=u.totalDeposit||0;tw+=u.totalWithdraw||0;tp+=u.totalProfit||0;});const cur=await getCur();const sm=sym(cur);document.getElementById("asU").textContent=s.size;document.getElementById("asD").textContent=`${sm} ${td}`;document.getElementById("asW").textContent=`${sm} ${tw}`;document.getElementById("asP").textContent=`${sm} ${tp}`;}
+async function loadDeps(){const el=document.getElementById("depList");el.innerHTML="";try{const q=query(collection(db,"deposits"),where("status","==","pending"),orderBy("createdAt","desc"));const s=await getDocs(q);const cur=await getCur();const sm=sym(cur);if(s.empty){el.innerHTML=`<div class="empty"><i class="fa fa-check-circle"></i><p>No pending deposits</p></div>`;return;}s.forEach(d=>{const dep=d.data();const c=document.createElement("div");c.className="acard";c.innerHTML=`<div class="arow"><div class="ainfo"><strong>${dep.email}</strong><p>Amount: <strong style="color:var(--g)">${sm} ${dep.amount}</strong> · ${dep.method}</p><p>TX: <strong style="color:var(--a)">${dep.txId}</strong> · ${fmt(dep.createdAt)}</p></div><span class="badge bp">Pending</span></div><div class="aacts"><button class="bappr" onclick="apprDep('${d.id}','${dep.userId}',${dep.amount})">✓ Approve</button><button class="brej" onclick="rejReq('deposits','${d.id}')">✗ Reject</button></div>`;el.appendChild(c);});}catch(e){el.innerHTML=`<div class="empty"><p>Create Firestore index — open browser console for link.</p></div>`;}}
+window.apprDep=async function(id,uid,amt){try{await updateDoc(doc(db,"deposits",id),{status:"approved"});await updateDoc(doc(db,"users",uid),{balance:increment(amt),totalDeposit:increment(amt)});await addDoc(collection(db,"transactions"),{userId:uid,type:"deposit",amount:amt,note:"Deposit approved",createdAt:serverTimestamp()});toast("Deposit approved!","ok");loadDeps();loadStats();}catch(e){toast("Error","err");}};
+async function loadWds(){const el=document.getElementById("wdList");el.innerHTML="";try{const q=query(collection(db,"withdraws"),where("status","==","pending"),orderBy("createdAt","desc"));const s=await getDocs(q);const cur=await getCur();const sm=sym(cur);if(s.empty){el.innerHTML=`<div class="empty"><i class="fa fa-check-circle"></i><p>No pending withdrawals</p></div>`;return;}s.forEach(d=>{const w=d.data();const c=document.createElement("div");c.className="acard";c.innerHTML=`<div class="arow"><div class="ainfo"><strong>${w.email}</strong><p>Amount: <strong style="color:var(--r)">${sm} ${w.amount}</strong> · ${w.method}</p><p>Account: <strong style="color:var(--a)">${w.account}</strong> · ${fmt(w.createdAt)}</p></div><span class="badge bp">Pending</span></div><div class="aacts"><button class="bappr" onclick="apprWd('${d.id}','${w.userId}',${w.amount})">✓ Approve</button><button class="brej" onclick="rejReq('withdraws','${d.id}')">✗ Reject</button></div>`;el.appendChild(c);});}catch(e){el.innerHTML=`<div class="empty"><p>Create Firestore index — open browser console for link.</p></div>`;}}
+window.apprWd=async function(id,uid,amt){const s=await getDoc(doc(db,"users",uid));if((s.data().balance||0)<amt)return toast("Insufficient balance","err");try{await updateDoc(doc(db,"withdraws",id),{status:"approved"});await updateDoc(doc(db,"users",uid),{balance:increment(-amt),totalWithdraw:increment(amt)});await addDoc(collection(db,"transactions"),{userId:uid,type:"withdraw",amount:-amt,note:"Withdrawal approved",createdAt:serverTimestamp()});toast("Withdrawal approved!","ok");loadWds();loadStats();}catch(e){toast("Error","err");}};
+window.rejReq=async function(col,id){await updateDoc(doc(db,col,id),{status:"rejected"});toast("Rejected","err");if(col==="deposits")loadDeps();else loadWds();};
+async function loadUsers(){const el=document.getElementById("uList");el.innerHTML="";const cur=await getCur();const sm=sym(cur);const s=await getDocs(collection(db,"users"));s.forEach(d=>{const u=d.data();if(u.role==="admin")return;const c=document.createElement("div");c.className="acard";c.innerHTML=`<div class="arow"><div class="ainfo"><strong>${u.displayName||u.email}</strong><p>${u.email}</p><p>Balance: <strong style="color:var(--a)">${sm} ${u.balance||0}</strong> · Deposit: ${sm} ${u.totalDeposit||0}</p><p>Joined: ${fmt(u.createdAt)}</p></div><span class="badge ${u.blocked?'br2':'ba'}">${u.blocked?'Blocked':'Active'}</span></div><div class="aacts"><button class="bblk" onclick="togBlk('${d.id}',${u.blocked})">${u.blocked?'Unblock':'Block'}</button><button class="binfo" onclick="viewUser('${d.id}')">Details</button></div>`;el.appendChild(c);});}
+window.togBlk=async function(uid,blk){await updateDoc(doc(db,"users",uid),{blocked:!blk});toast(blk?"Unblocked":"Blocked",blk?"ok":"err");loadUsers();};
+window.viewUser=async function(uid){const s=await getDoc(doc(db,"users",uid));const u=s.data();const cur=await getCur();const sm=sym(cur);document.getElementById("uDetail").innerHTML=`<div class="prow"><div class="lb">Email</div><div class="vv">${u.email}</div></div><div class="prow"><div class="lb">Name</div><div class="vv">${u.displayName||"—"}</div></div><div class="prow"><div class="lb">Balance</div><div class="vv" style="color:var(--g)">${sm} ${u.balance||0}</div></div><div class="prow"><div class="lb">Total Deposit</div><div class="vv">${sm} ${u.totalDeposit||0}</div></div><div class="prow"><div class="lb">Total Withdraw</div><div class="vv">${sm} ${u.totalWithdraw||0}</div></div><div class="prow"><div class="lb">Total Profit</div><div class="vv">${sm} ${u.totalProfit||0}</div></div><div class="prow"><div class="lb">Referral Code</div><div class="vv">${u.referralCode}</div></div><div class="prow"><div class="lb">Wallet</div><div class="vv">${u.wallet?.method||"—"}: ${u.wallet?.number||"—"}</div></div><div class="prow"><div class="lb">Status</div><div class="vv" style="color:${u.blocked?'var(--r)':'var(--g)'}">${u.blocked?'Blocked':'Active'}</div></div><div class="prow"><div class="lb">Joined</div><div class="vv">${fmt(u.createdAt)}</div></div>`;openM("mUser");};
+async function loadPlans(){const el=document.getElementById("planList");el.innerHTML="";const s=await getDocs(collection(db,"plans"));if(s.empty){el.innerHTML=`<div class="empty"><i class="fa fa-chart-line"></i><p>No plans yet</p></div>`;return;}s.forEach(d=>{const p=d.data();const c=document.createElement("div");c.className="acard";c.innerHTML=`<div class="arow"><div class="ainfo"><strong>${p.name}</strong><p>Amount: ${p.amount} · Daily: ${p.dailyProfit} · Days: ${p.days}</p></div><button class="brej" onclick="delPlan('${d.id}')">Delete</button></div>`;el.appendChild(c);});}
+window.addPlan=async function(){const nm=document.getElementById("pNm").value.trim();const amt=Number(document.getElementById("pAmt").value);const dp=Number(document.getElementById("pProfit").value);const days=Number(document.getElementById("pDays").value);if(!nm)return toast("Enter plan name","err");if(!amt)return toast("Enter amount","err");if(!dp)return toast("Enter daily profit","err");if(!days)return toast("Enter duration","err");try{await addDoc(collection(db,"plans"),{name:nm,amount:amt,dailyProfit:dp,days,createdAt:serverTimestamp()});toast("Plan added!","ok");["pNm","pAmt","pProfit","pDays"].forEach(id=>document.getElementById(id).value="");loadPlans();}catch(e){toast("Error","err");}};
+window.delPlan=async function(id){if(!confirm("Delete this plan?"))return;await deleteDoc(doc(db,"plans",id));toast("Deleted","err");loadPlans();};
+async function loadDepSettings(){try{const s=await getDoc(doc(db,"settings","deposit"));if(s.exists()){const d=s.data();if(d.EasyPaisa?.number)document.getElementById("ep-d").textContent=`${d.EasyPaisa.number} (${d.EasyPaisa.name})`;if(d.JazzCash?.number)document.getElementById("jc-d").textContent=`${d.JazzCash.number} (${d.JazzCash.name})`;if(d.Bank?.number)document.getElementById("bk-d").textContent=`${d.Bank.number} (${d.Bank.name})`;if(d.USD?.number)document.getElementById("ud-d").textContent=`${d.USD.number} (${d.USD.name})`;}}catch(e){}}
+window.editDep=function(m){EM=m;document.getElementById("mDepTit").textContent=`Edit ${m}`;document.getElementById("dmNum").value="";document.getElementById("dmNm").value="";openM("mDep");};
+window.saveDepM=async function(){const num=document.getElementById("dmNum").value.trim();const nm=document.getElementById("dmNm").value.trim();if(!num)return toast("Enter number","err");if(!nm)return toast("Enter name","err");try{const ref=doc(db,"settings","deposit");const s=await getDoc(ref);const ex=s.exists()?s.data():{};ex[EM]={number:num,name:nm};await setDoc(ref,ex);toast(`${EM} saved!`,"ok");closeM("mDep");loadDepSettings();}catch(e){toast("Error","err");}};
+async function loadCurSet(){const cur=await getCur();SC=cur;document.getElementById("cPKR").classList.toggle("on",cur==="PKR");document.getElementById("cUSD").classList.toggle("on",cur==="USD");}
+window.selCur=function(c){SC=c;document.getElementById("cPKR").classList.toggle("on",c==="PKR");document.getElementById("cUSD").classList.toggle("on",c==="USD");};
+window.saveCur=async function(){try{await setDoc(doc(db,"settings","app"),{currency:SC},{merge:true});const s=await getDocs(collection(db,"users"));for(const d of s.docs){await updateDoc(doc(db,"users",d.id),{currency:SC});}toast(`Currency set to ${SC}!`,"ok");loadStats();}catch(e){toast("Error","err");}};
+window.runProfit=async function(){toast("Running...","info");try{const ps=await getDocs(query(collection(db,"userPlans"),where("status","==","active")));let count=0;const today=new Date().toDateString();for(const pd of ps.docs){const p=pd.data();if(p.lastProfitDate===today)continue;await updateDoc(doc(db,"users",p.userId),{balance:increment(p.dailyProfit),totalProfit:increment(p.dailyProfit)});await updateDoc(doc(db,"userPlans",pd.id),{lastProfitDate:today,daysRemaining:increment(-1)});await addDoc(collection(db,"transactions"),{userId:p.userId,type:"daily_profit",amount:p.dailyProfit,note:"Daily profit",createdAt:serverTimestamp()});if((p.daysRemaining-1)<=0)await updateDoc(doc(db,"userPlans",pd.id),{status:"completed"});count++;}toast(`Profit sent to ${count} users!`,"ok");loadStats();}catch(e){toast("Error","err");}};
+window.manualCredit=async function(){const email=document.getElementById("crEmail").value.trim();const amt=Number(document.getElementById("crAmt").value);if(!email)return toast("Enter email","err");if(!amt)return toast("Enter amount","err");try{const q=query(collection(db,"users"),where("email","==",email));const s=await getDocs(q);if(s.empty)return toast("User not found","err");const uid=s.docs[0].id;await updateDoc(doc(db,"users",uid),{balance:increment(amt)});await addDoc(collection(db,"transactions"),{userId:uid,type:amt>0?"admin_credit":"admin_debit",amount:amt,note:"Admin adjustment",createdAt:serverTimestamp()});toast(`Balance adjusted: ${amt}!`,"ok");document.getElementById("crEmail").value="";document.getElementById("crAmt").value="";loadStats();}catch(e){toast("Error","err");}};
+</script>
+</body>
+</html>

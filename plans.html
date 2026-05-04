@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Velaro – Investment Plans</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+:root{--bg:#080e1e;--card:#0f1729;--card2:#131d35;--border:rgba(255,255,255,.07);--p:#1e6fff;--a:#00d4ff;--g:#00e676;--r:#ff4d6d;--gold:#f4b942;--tx:#e8edf5;--tx2:#8a9bb8;--fh:'Syne',sans-serif;--fb:'DM Sans',sans-serif;}
+html,body{min-height:100vh;font-family:var(--fb);color:var(--tx);background:var(--bg);}
+.hidden{display:none!important;}
+.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-80px);background:var(--card2);color:var(--tx);padding:12px 24px;border-radius:50px;font-size:14px;border:1px solid var(--border);z-index:9999;transition:transform .35s cubic-bezier(.34,1.56,.64,1);white-space:nowrap;max-width:90vw;text-align:center;}
+.toast.show{transform:translateX(-50%) translateY(0);}
+.toast.ok{border-color:rgba(0,230,118,.4);color:var(--g);}
+.toast.err{border-color:rgba(255,77,109,.4);color:var(--r);}
+.loader{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:9000;}
+.lbox{width:72px;height:72px;background:linear-gradient(135deg,var(--p),var(--a));border-radius:20px;display:flex;align-items:center;justify-content:center;}
+.lbox span{font-family:var(--fh);font-size:32px;font-weight:800;color:#fff;}
+.page{max-width:480px;margin:0 auto;padding-bottom:40px;}
+.hdr{display:flex;align-items:center;gap:14px;padding:16px 18px;background:var(--card);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;}
+.back{width:38px;height:38px;background:var(--card2);border:1px solid var(--border);border-radius:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--tx2);font-size:16px;}
+.htit{font-family:var(--fh);font-size:18px;font-weight:700;color:var(--tx);}
+.bal-bar{margin:16px 16px 0;background:linear-gradient(135deg,#0d2151,#112d6b);border-radius:18px;padding:18px 20px;border:1px solid rgba(30,111,255,.2);}
+.bal-bar p{font-size:12px;color:rgba(255,255,255,.4);margin-bottom:4px;text-transform:uppercase;letter-spacing:.8px;}
+.bal-bar h3{font-family:var(--fh);font-size:28px;font-weight:800;color:#fff;}
+.bal-bar span{color:var(--a);font-size:16px;margin-right:2px;}
+.sec{margin:20px 16px 0;}
+.stit{font-family:var(--fh);font-size:15px;font-weight:700;color:var(--tx);margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+.stit::before{content:'';width:3px;height:17px;background:linear-gradient(var(--p),var(--a));border-radius:3px;display:inline-block;}
+.plans{display:flex;flex-direction:column;gap:14px;}
+.pcard{background:var(--card);border:1px solid var(--border);border-radius:20px;overflow:hidden;transition:border-color .2s;}
+.pcard:hover{border-color:rgba(30,111,255,.3);}
+.ptop{background:linear-gradient(135deg,rgba(30,111,255,.12),rgba(0,212,255,.06));padding:20px;border-bottom:1px solid var(--border);}
+.pname{font-family:var(--fh);font-size:20px;font-weight:800;color:var(--tx);margin-bottom:4px;}
+.pdur{font-size:13px;color:var(--tx2);}
+.pbody{padding:20px;}
+.prow{display:flex;justify-content:space-between;margin-bottom:12px;}
+.pk{font-size:12px;color:var(--tx2);}
+.pv{font-size:14px;font-weight:700;color:var(--tx);}
+.pv.green{color:var(--g);}
+.pv.gold{color:var(--gold);}
+.pbtn{width:100%;padding:14px;background:linear-gradient(135deg,var(--p),#0a8fd1);color:#fff;border:none;border-radius:13px;font-family:var(--fh);font-size:15px;font-weight:700;cursor:pointer;margin-top:4px;box-shadow:0 4px 16px rgba(30,111,255,.3);letter-spacing:.4px;}
+.pbtn:disabled{opacity:.5;cursor:not-allowed;box-shadow:none;}
+.pbtn.act{background:linear-gradient(135deg,var(--g),#00b248);box-shadow:0 4px 16px rgba(0,230,118,.3);}
+.info-box{background:rgba(0,212,255,.04);border:1px solid rgba(0,212,255,.12);border-radius:14px;padding:16px;margin:16px 16px 0;font-size:13px;color:var(--tx2);line-height:1.7;}
+.info-box strong{color:var(--a);}
+.empty{text-align:center;padding:60px 20px;color:var(--tx2);}
+.empty i{font-size:44px;margin-bottom:16px;display:block;opacity:.2;}
+</style>
+</head>
+<body>
+<div id="t" class="toast"></div>
+<div id="loader" class="loader"><div class="lbox"><span>V</span></div></div>
+<div id="page" class="page hidden">
+  <header class="hdr">
+    <div class="back" onclick="goBack()"><i class="fa fa-arrow-left"></i></div>
+    <p class="htit">Investment Plans</p>
+  </header>
+  <div class="bal-bar">
+    <p>Available Balance</p>
+    <h3><span id="csym">Rs</span><span id="myBal">0</span></h3>
+  </div>
+  <div class="info-box">
+    <strong>How it works:</strong> Activate a plan by investing. You'll receive daily profit automatically until the plan duration ends. Each plan can only be activated once at a time.
+  </div>
+  <section class="sec">
+    <h3 class="stit">Choose Your Plan</h3>
+    <div class="plans" id="plansList"></div>
+  </section>
+</div>
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import{getAuth,onAuthStateChanged}from"https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import{getFirestore,doc,getDoc,getDocs,addDoc,updateDoc,collection,query,where,serverTimestamp,increment}from"https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+const FB={apiKey:"AIzaSyAicy4ym0omYMS5te0BXsR15d7jTrcydak",authDomain:"velaro-c487e.firebaseapp.com",projectId:"velaro-c487e",storageBucket:"velaro-c487e.firebasestorage.app",messagingSenderId:"394100524704",appId:"1:394100524704:web:a44d395c404d6f6eb2abc5"};
+const app=initializeApp(FB);const auth=getAuth(app);const db=getFirestore(app);
+const BASE="/Velaro/";let CU=null,CD=null;
+function toast(m,t=""){const el=document.getElementById("t");el.textContent=m;el.className="toast show "+t;setTimeout(()=>el.className="toast",3500);}
+function sym(c){return c==="USD"?"$":"Rs";}
+window.goBack=()=>window.location.href=BASE+"dashboard.html";
+onAuthStateChanged(auth,async user=>{
+  if(!user)return window.location.replace(BASE+"index.html");
+  try{
+    const s=await getDoc(doc(db,"users",user.uid));
+    if(!s.exists())return window.location.replace(BASE+"index.html");
+    const d=s.data();
+    if(d.blocked)return window.location.replace(BASE+"index.html");
+    CU=user;CD=d;
+    document.getElementById("loader").classList.add("hidden");
+    document.getElementById("page").classList.remove("hidden");
+    const sm=sym(d.currency||"PKR");
+    document.getElementById("csym").textContent=sm;
+    document.getElementById("myBal").textContent=d.balance||0;
+    loadPlans(d,sm);
+  }catch(e){toast("Connection error","err");}
+});
+async function loadPlans(ud,s){
+  const el=document.getElementById("plansList");el.innerHTML="";
+  const ps=await getDocs(collection(db,"plans"));
+  if(ps.empty){el.innerHTML=`<div class="empty"><i class="fa fa-chart-line"></i><p>No plans available yet</p></div>`;return;}
+  const aq=query(collection(db,"userPlans"),where("userId","==",CU.uid),where("status","==","active"));
+  const as=await getDocs(aq);
+  const aids=as.docs.map(d=>d.data().planId);
+  const totalReturn=(amt,dp,days)=>dp*days;
+  const roi=(amt,dp,days)=>((dp*days/amt)*100).toFixed(0);
+  ps.forEach(pd=>{
+    const p=pd.data();const isA=aids.includes(pd.id);
+    const c=document.createElement("div");c.className="pcard";
+    c.innerHTML=`
+      <div class="ptop">
+        <p class="pname">${p.name}</p>
+        <p class="pdur"><i class="fa fa-clock" style="margin-right:5px;color:var(--a)"></i>${p.days} Days Duration</p>
+      </div>
+      <div class="pbody">
+        <div class="prow"><span class="pk">Investment Required</span><span class="pv">${s} ${p.amount}</span></div>
+        <div class="prow"><span class="pk">Daily Profit</span><span class="pv green">+ ${s} ${p.dailyProfit}</span></div>
+        <div class="prow"><span class="pk">Total Return</span><span class="pv gold">${s} ${totalReturn(p.amount,p.dailyProfit,p.days)}</span></div>
+        <div class="prow"><span class="pk">ROI</span><span class="pv green">${roi(p.amount,p.dailyProfit,p.days)}%</span></div>
+        <button class="pbtn ${isA?'act':''}" ${isA?'disabled':''} onclick="invest('${pd.id}',${p.amount},${p.dailyProfit},${p.days},'${p.name}')">
+          ${isA?'✓ Plan Active':'Activate Plan'}
+        </button>
+      </div>
+    `;
+    el.appendChild(c);
+  });
+}
+window.invest=async function(pid,amt,dp,days,name){
+  const fresh=await getDoc(doc(db,"users",CU.uid));
+  const bal=fresh.data().balance||0;
+  const s=sym(fresh.data().currency||"PKR");
+  if(bal<amt)return toast(`Need ${s} ${amt} to activate this plan. Current balance: ${s} ${bal}`,"err");
+  try{
+    await updateDoc(doc(db,"users",CU.uid),{balance:increment(-amt)});
+    await addDoc(collection(db,"userPlans"),{userId:CU.uid,planId:pid,amount:amt,dailyProfit:dp,days,daysRemaining:days,status:"active",lastProfitDate:null,createdAt:serverTimestamp()});
+    await addDoc(collection(db,"transactions"),{userId:CU.uid,type:"plan_activation",amount:-amt,note:`${name} plan activated`,createdAt:serverTimestamp()});
+    toast(`${name} plan activated! Daily profit starts tomorrow.`,"ok");
+    document.getElementById("myBal").textContent=bal-amt;
+    setTimeout(()=>location.reload(),1500);
+  }catch(e){toast("Error activating plan. Try again.","err");}
+};
+</script>
+</body>
+</html>

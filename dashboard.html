@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Velaro – Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+:root{--bg:#080e1e;--card:#0f1729;--card2:#131d35;--border:rgba(255,255,255,.07);--p:#1e6fff;--a:#00d4ff;--g:#00e676;--r:#ff4d6d;--gold:#f4b942;--tx:#e8edf5;--tx2:#8a9bb8;--inp:#070d1c;--fh:'Syne',sans-serif;--fb:'DM Sans',sans-serif;}
+html,body{min-height:100vh;font-family:var(--fb);color:var(--tx);background:var(--bg);}
+.hidden{display:none!important;}
+.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-80px);background:var(--card2);color:var(--tx);padding:12px 24px;border-radius:50px;font-size:14px;border:1px solid var(--border);z-index:9999;transition:transform .35s cubic-bezier(.34,1.56,.64,1);white-space:nowrap;max-width:90vw;text-align:center;}
+.toast.show{transform:translateX(-50%) translateY(0);}
+.toast.ok{border-color:rgba(0,230,118,.4);color:var(--g);}
+.toast.err{border-color:rgba(255,77,109,.4);color:var(--r);}
+.toast.info{border-color:rgba(0,212,255,.4);color:var(--a);}
+.loader{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9000;gap:20px;}
+.lbox{width:72px;height:72px;background:linear-gradient(135deg,var(--p),var(--a));border-radius:20px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 28px rgba(30,111,255,.3);}
+.lbox span{font-family:var(--fh);font-size:32px;font-weight:800;color:#fff;}
+.ltxt{color:var(--tx2);font-size:12px;letter-spacing:2px;text-transform:uppercase;}
+.app{max-width:480px;margin:0 auto;padding-bottom:90px;}
+.hdr{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;background:var(--card);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;}
+.hl{display:flex;align-items:center;gap:10px;}
+.hr{display:flex;align-items:center;gap:8px;}
+.ava{width:40px;height:40px;background:linear-gradient(135deg,var(--p),var(--a));border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--fh);font-weight:700;font-size:15px;color:#fff;cursor:pointer;}
+.wt{font-size:11px;color:var(--tx2);}
+.ue{font-size:13px;color:var(--tx);font-weight:600;max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.vlogo{font-family:var(--fh);font-weight:800;font-size:19px;background:linear-gradient(135deg,#fff,var(--a));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.lbtn{background:rgba(255,77,109,.1);border:1px solid rgba(255,77,109,.2);color:var(--r);padding:7px 11px;border-radius:10px;cursor:pointer;font-size:13px;}
+.bcard{margin:16px 16px 0;background:linear-gradient(135deg,#0d2151,#112d6b);border-radius:22px;padding:24px 22px;position:relative;overflow:hidden;border:1px solid rgba(30,111,255,.2);box-shadow:0 12px 40px rgba(0,0,0,.4);}
+.bc1,.bc2{position:absolute;border-radius:50%;opacity:.06;background:var(--a);pointer-events:none;}
+.bc1{width:200px;height:200px;top:-60px;right:-60px;}
+.bc2{width:140px;height:140px;bottom:-50px;left:0;}
+.blbl{font-size:11px;color:rgba(255,255,255,.4);margin-bottom:8px;letter-spacing:1px;text-transform:uppercase;}
+.bnum{font-family:var(--fh);font-size:38px;font-weight:800;color:#fff;margin-bottom:4px;}
+.bsym{font-size:18px;color:var(--a);margin-right:3px;}
+.bsub{font-size:12px;color:rgba(255,255,255,.35);margin-bottom:20px;}
+.brow{display:flex;justify-content:space-between;border-top:1px solid rgba(255,255,255,.08);padding-top:16px;}
+.blb{font-size:10px;color:rgba(255,255,255,.35);margin-bottom:4px;text-transform:uppercase;letter-spacing:.8px;}
+.bvl{font-size:13px;font-weight:600;color:#fff;}
+.refc{color:var(--a)!important;cursor:pointer;}
+.tmr{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:16px 18px;margin:12px 16px 0;}
+.tlbl{font-size:11px;color:var(--tx2);letter-spacing:1px;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:6px;}
+.tdot{width:6px;height:6px;border-radius:50%;background:var(--g);display:inline-block;box-shadow:0 0 5px var(--g);}
+.tdsp{display:flex;justify-content:center;gap:10px;}
+.tu{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:10px 12px;min-width:52px;text-align:center;}
+.tn{font-family:var(--fh);font-size:22px;font-weight:800;color:var(--a);display:block;}
+.tl{font-size:9px;color:var(--tx2);letter-spacing:1px;text-transform:uppercase;}
+.qact{display:flex;gap:8px;margin:12px 16px 0;}
+.qbtn{flex:1;background:var(--card);border:1px solid var(--border);border-radius:16px;padding:14px 6px;text-align:center;cursor:pointer;}
+.qbtn:active{opacity:.7;}
+.qico{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 8px;font-size:16px;color:#fff;}
+.qi1{background:linear-gradient(135deg,#00e676,#00b248);}
+.qi2{background:linear-gradient(135deg,#ff4d6d,#cc0033);}
+.qi3{background:linear-gradient(135deg,var(--gold),#e07b00);}
+.qi4{background:linear-gradient(135deg,#a855f7,#7c3aed);}
+.qbtn p{font-size:11px;color:var(--tx2);font-weight:500;}
+.sec{margin:16px 16px 0;}
+.stit{font-family:var(--fh);font-size:15px;font-weight:700;color:var(--tx);margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.stit::before{content:'';width:3px;height:17px;background:linear-gradient(var(--p),var(--a));border-radius:3px;display:inline-block;}
+.sgr{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}
+.scard{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px;position:relative;overflow:hidden;}
+.scico{font-size:30px;opacity:.05;position:absolute;right:12px;bottom:10px;color:var(--a);}
+.sclbl{font-size:11px;color:var(--tx2);margin-bottom:7px;}
+.scval{font-family:var(--fh);font-size:18px;font-weight:700;color:var(--tx);}
+.s1{border-left:3px solid var(--g);}
+.s2{border-left:3px solid var(--r);}
+.s3{border-left:3px solid var(--p);}
+.s4{border-left:3px solid #a855f7;}
+.sgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+.si{background:var(--card);border:1px solid var(--border);border-radius:15px;padding:13px 6px;text-align:center;cursor:pointer;}
+.si:active{opacity:.7;}
+.si p{font-size:10px;color:var(--tx2);margin-top:7px;font-weight:500;}
+.sico{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto;font-size:15px;color:#fff;}
+.i1{background:linear-gradient(135deg,#00e676,#00b248);}
+.i2{background:linear-gradient(135deg,#ff4d6d,#cc0033);}
+.i3{background:linear-gradient(135deg,var(--p),#0d4fd6);}
+.i4{background:linear-gradient(135deg,#a855f7,#7c3aed);}
+.i5{background:linear-gradient(135deg,var(--gold),#e07b00);}
+.i6{background:linear-gradient(135deg,var(--a),#0099cc);}
+.i7{background:linear-gradient(135deg,#ff6b35,#cc4400);}
+.i8{background:linear-gradient(135deg,#ec4899,#9d174d);}
+.tlist{display:flex;flex-direction:column;gap:8px;}
+.titem{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:13px;display:flex;align-items:center;gap:12px;}
+.tava{width:38px;height:38px;background:linear-gradient(135deg,var(--p),var(--a));border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;color:#fff;flex-shrink:0;}
+.rwcard{background:linear-gradient(135deg,#1a2e5a,#0d1f42);border:1px solid rgba(244,185,66,.15);border-radius:18px;padding:24px;text-align:center;}
+.rwico{font-size:40px;margin-bottom:12px;display:block;color:var(--gold);}
+.rwcard p{font-size:14px;line-height:1.7;color:var(--tx2);}
+.rwcard strong{color:var(--gold);}
+.rwcode{display:inline-block;margin-top:16px;background:linear-gradient(135deg,var(--gold),#e07b00);color:#000;padding:10px 24px;border-radius:50px;cursor:pointer;font-weight:700;font-size:14px;font-family:var(--fh);}
+.txlist{display:flex;flex-direction:column;gap:8px;}
+.txitem{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:13px 15px;display:flex;justify-content:space-between;align-items:center;}
+.txtype{font-size:13px;font-weight:600;color:var(--tx);}
+.txmeta{font-size:11px;color:var(--tx2);margin-top:2px;}
+.txamt{font-family:var(--fh);font-size:15px;font-weight:700;}
+.cr{color:var(--g);}
+.db{color:var(--r);}
+.mover{position:fixed;inset:0;background:rgba(0,0,0,.75);display:flex;align-items:flex-end;justify-content:center;z-index:500;backdrop-filter:blur(6px);}
+.mbox{background:#0f1729;border:1px solid var(--border);border-radius:24px 24px 0 0;padding:28px 22px 40px;width:100%;max-width:480px;}
+.mbox h3{font-family:var(--fh);font-size:18px;font-weight:700;margin-bottom:18px;color:var(--tx);}
+.macts{display:flex;gap:10px;margin-top:14px;}
+.ig{position:relative;margin-bottom:10px;}
+.ig input{width:100%;padding:13px 14px 13px 43px;border:1.5px solid rgba(255,255,255,.08);border-radius:13px;font-family:var(--fb);font-size:14px;color:#e8edf5;background:var(--inp);outline:none;-webkit-text-fill-color:#e8edf5;caret-color:#e8edf5;transition:border-color .2s;}
+.ig input:-webkit-autofill,.ig input:-webkit-autofill:hover,.ig input:-webkit-autofill:focus{-webkit-box-shadow:0 0 0 9999px var(--inp) inset!important;-webkit-text-fill-color:#e8edf5!important;}
+.ig input:focus{border-color:rgba(30,111,255,.5);}
+.ig input::placeholder{color:rgba(138,155,184,.45);}
+.ii{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--tx2);font-size:13px;pointer-events:none;}
+.btn2{padding:14px;background:linear-gradient(135deg,var(--p),#0a8fd1);color:#fff;border:none;border-radius:13px;font-family:var(--fh);font-size:14px;font-weight:700;cursor:pointer;width:100%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(30,111,255,.35);}
+.btn3{padding:13px;background:rgba(255,255,255,.04);color:var(--tx);border:1px solid var(--border);border-radius:13px;font-size:14px;cursor:pointer;width:100%;}
+.pava{width:76px;height:76px;background:linear-gradient(135deg,var(--p),var(--a));border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--fh);font-size:30px;font-weight:800;color:#fff;margin:0 auto 18px;box-shadow:0 0 24px rgba(30,111,255,.3);}
+.prow{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:13px 15px;margin-bottom:8px;}
+.prow .lb{font-size:11px;color:var(--tx2);margin-bottom:4px;}
+.prow .vv{font-size:14px;font-weight:600;color:var(--tx);}
+.wmlist{display:flex;flex-direction:column;gap:8px;margin-bottom:14px;}
+.wmbtn{padding:13px 15px;background:var(--card2);border:1px solid var(--border);border-radius:13px;color:var(--tx);font-family:var(--fb);font-size:14px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:12px;width:100%;}
+.wmbtn.sel{border-color:rgba(30,111,255,.4);background:rgba(30,111,255,.08);}
+.wmbtn i{font-size:16px;color:var(--p);}
+.dinfo{background:rgba(0,212,255,.04);border:1px solid rgba(0,212,255,.12);border-radius:12px;padding:14px;margin-bottom:12px;font-size:13px;color:var(--tx2);line-height:1.8;}
+.winfo{background:rgba(255,77,109,.05);border:1px solid rgba(255,77,109,.15);border-radius:12px;padding:12px;margin-bottom:12px;font-size:13px;color:var(--tx2);}
+.empty{text-align:center;padding:44px 20px;color:var(--tx2);}
+.empty i{font-size:36px;margin-bottom:12px;display:block;opacity:.2;}
+.empty p{font-size:14px;}
+</style>
+</head>
+<body>
+<div id="t" class="toast"></div>
+<div id="loader" class="loader"><div class="lbox"><span>V</span></div><p class="ltxt">Loading...</p></div>
+<div id="app" class="app hidden">
+  <header class="hdr">
+    <div class="hl">
+      <div class="ava" id="ava" onclick="openM('mProfile')">U</div>
+      <div><p class="wt">Welcome back</p><p class="ue" id="uname">—</p></div>
+    </div>
+    <div class="hr">
+      <span class="vlogo">Velaro</span>
+      <button class="lbtn" onclick="doLogout()"><i class="fa fa-sign-out-alt"></i></button>
+    </div>
+  </header>
+  <div class="bcard">
+    <div class="bc1"></div><div class="bc2"></div>
+    <p class="blbl">Total Balance</p>
+    <h2 class="bnum"><span class="bsym" id="csym">Rs</span><span id="wbal">0</span></h2>
+    <p class="bsub">Your investment portfolio</p>
+    <div class="brow">
+      <div><p class="blb">User ID</p><p class="bvl" id="wuid">—</p></div>
+      <div><p class="blb">Referral Code</p><p class="bvl refc" id="wref" onclick="copyRef()">—</p></div>
+    </div>
+  </div>
+  <div class="tmr">
+    <p class="tlbl"><span class="tdot"></span> Next Daily Profit</p>
+    <div class="tdsp">
+      <div class="tu"><span class="tn" id="th">00</span><span class="tl">HRS</span></div>
+      <div class="tu"><span class="tn" id="tm">00</span><span class="tl">MIN</span></div>
+      <div class="tu"><span class="tn" id="ts">00</span><span class="tl">SEC</span></div>
+    </div>
+  </div>
+  <div class="qact">
+    <div class="qbtn" onclick="openM('mDep')"><div class="qico qi1"><i class="fa fa-plus"></i></div><p>Deposit</p></div>
+    <div class="qbtn" onclick="openM('mWd')"><div class="qico qi2"><i class="fa fa-minus"></i></div><p>Withdraw</p></div>
+    <div class="qbtn" onclick="copyRef()"><div class="qico qi3"><i class="fa fa-share-alt"></i></div><p>Referral</p></div>
+    <div class="qbtn" onclick="showS('sTx')"><div class="qico qi4"><i class="fa fa-history"></i></div><p>History</p></div>
+  </div>
+  <section class="sec">
+    <h3 class="stit">My Stats</h3>
+    <div class="sgr">
+      <div class="scard s1"><i class="fa fa-arrow-down scico"></i><p class="sclbl">Total Deposit</p><p class="scval" id="stD">0</p></div>
+      <div class="scard s2"><i class="fa fa-arrow-up scico"></i><p class="sclbl">Total Withdraw</p><p class="scval" id="stW">0</p></div>
+      <div class="scard s3"><i class="fa fa-coins scico"></i><p class="sclbl">Total Profit</p><p class="scval" id="stP">0</p></div>
+      <div class="scard s4"><i class="fa fa-users scico"></i><p class="sclbl">Team Earnings</p><p class="scval" id="stT">0</p></div>
+    </div>
+  </section>
+  <section class="sec">
+    <h3 class="stit">Services</h3>
+    <div class="sgrid">
+      <div class="si" onclick="openM('mDep')"><div class="sico i1"><i class="fa fa-plus-circle"></i></div><p>Deposit</p></div>
+      <div class="si" onclick="openM('mWd')"><div class="sico i2"><i class="fa fa-minus-circle"></i></div><p>Withdraw</p></div>
+      <div class="si" onclick="goTo('plans.html')"><div class="sico i3"><i class="fa fa-chart-line"></i></div><p>Plans</p></div>
+      <div class="si" onclick="showS('sTeam')"><div class="sico i4"><i class="fa fa-users"></i></div><p>Team</p></div>
+      <div class="si" onclick="showS('sRew')"><div class="sico i5"><i class="fa fa-gift"></i></div><p>Rewards</p></div>
+      <div class="si" onclick="showS('sTx')"><div class="sico i6"><i class="fa fa-history"></i></div><p>History</p></div>
+      <div class="si" onclick="openM('mWallet')"><div class="sico i7"><i class="fa fa-wallet"></i></div><p>Wallet</p></div>
+      <div class="si" onclick="openM('mProfile')"><div class="sico i8"><i class="fa fa-user"></i></div><p>Profile</p></div>
+    </div>
+  </section>
+  <section class="sec hidden" id="sTeam"><h3 class="stit">My Team</h3><div class="tlist" id="teamList"></div></section>
+  <section class="sec hidden" id="sRew">
+    <h3 class="stit">Rewards</h3>
+    <div class="rwcard"><i class="fa fa-gift rwico"></i><p>Invite friends and earn <strong id="rwAmt">Rs 100</strong> per referral.</p><p class="rwcode" id="rwCode" onclick="copyRef()">Copy My Code</p></div>
+  </section>
+  <section class="sec hidden" id="sTx"><h3 class="stit">Transactions</h3><div class="txlist" id="txList"></div></section>
+</div>
+
+<!-- DEPOSIT MODAL -->
+<div id="mDep" class="mover hidden">
+  <div class="mbox">
+    <h3><i class="fa fa-plus-circle" style="color:var(--g);margin-right:8px"></i>Deposit Funds</h3>
+    <div class="dinfo" id="dinfo">Loading payment details...</div>
+    <div class="ig"><input type="number" id="dAmt" placeholder="Amount (min 100)"/><i class="fa fa-rupee-sign ii"></i></div>
+    <div class="ig"><input type="text" id="dMeth" placeholder="Payment Method Used"/><i class="fa fa-university ii"></i></div>
+    <div class="ig"><input type="text" id="dTx" placeholder="Transaction ID / Reference"/><i class="fa fa-receipt ii"></i></div>
+    <div class="macts"><button class="btn3" onclick="closeM('mDep')">Cancel</button><button class="btn2" onclick="doDeposit()">Submit</button></div>
+  </div>
+</div>
+
+<!-- WITHDRAW MODAL -->
+<div id="mWd" class="mover hidden">
+  <div class="mbox">
+    <h3><i class="fa fa-minus-circle" style="color:var(--r);margin-right:8px"></i>Withdraw Funds</h3>
+    <div class="winfo"><i class="fa fa-info-circle" style="color:var(--r);margin-right:6px"></i>Min: <strong style="color:var(--tx)">Rs 200</strong> · Processing: 12–24 hours</div>
+    <div class="ig"><input type="number" id="wAmt" placeholder="Amount (min 200)"/><i class="fa fa-rupee-sign ii"></i></div>
+    <div class="ig"><input type="text" id="wAcc" placeholder="Account Number"/><i class="fa fa-mobile-alt ii"></i></div>
+    <div class="ig"><input type="text" id="wMeth" placeholder="Method (EasyPaisa/JazzCash/Bank)"/><i class="fa fa-university ii"></i></div>
+    <div class="macts"><button class="btn3" onclick="closeM('mWd')">Cancel</button><button class="btn2" onclick="doWithdraw()">Submit</button></div>
+  </div>
+</div>
+
+<!-- PROFILE MODAL -->
+<div id="mProfile" class="mover hidden">
+  <div class="mbox">
+    <h3>My Profile</h3>
+    <div class="pava" id="pava">U</div>
+    <div class="prow"><div class="lb">Email</div><div class="vv" id="pEmail">—</div></div>
+    <div class="prow"><div class="lb">User ID</div><div class="vv" id="pUID">—</div></div>
+    <div class="prow"><div class="lb">Referral Code</div><div class="vv" id="pRef" style="color:var(--a);cursor:pointer" onclick="copyRef()">—</div></div>
+    <div class="prow"><div class="lb">Balance</div><div class="vv" id="pBal" style="color:var(--g)">—</div></div>
+    <div class="prow"><div class="lb">Member Since</div><div class="vv" id="pDate">—</div></div>
+    <div class="ig" style="margin-top:12px"><input type="text" id="pName" placeholder="Set Display Name"/><i class="fa fa-user ii"></i></div>
+    <div class="macts"><button class="btn3" onclick="closeM('mProfile')">Close</button><button class="btn2" onclick="saveName()">Save</button></div>
+  </div>
+</div>
+
+<!-- WALLET MODAL -->
+<div id="mWallet" class="mover hidden">
+  <div class="mbox">
+    <h3><i class="fa fa-wallet" style="color:var(--p);margin-right:8px"></i>Bind Wallet</h3>
+    <p style="font-size:13px;color:var(--tx2);margin-bottom:14px">Select withdrawal method.</p>
+    <div class="wmlist">
+      <button class="wmbtn" id="wm-ep" onclick="selWM('EasyPaisa','wm-ep')"><i class="fa fa-mobile-alt"></i>EasyPaisa</button>
+      <button class="wmbtn" id="wm-jc" onclick="selWM('JazzCash','wm-jc')"><i class="fa fa-sim-card"></i>JazzCash</button>
+      <button class="wmbtn" id="wm-bk" onclick="selWM('Bank','wm-bk')"><i class="fa fa-university"></i>Bank Transfer</button>
+      <button class="wmbtn" id="wm-ud" onclick="selWM('USD Wire','wm-ud')"><i class="fa fa-dollar-sign"></i>USD Wire</button>
+    </div>
+    <div class="ig"><input type="text" id="wmNum" placeholder="Account / IBAN Number"/><i class="fa fa-hashtag ii"></i></div>
+    <div class="ig"><input type="text" id="wmNm" placeholder="Account Holder Name"/><i class="fa fa-user ii"></i></div>
+    <div class="macts"><button class="btn3" onclick="closeM('mWallet')">Cancel</button><button class="btn2" onclick="saveWallet()">Save</button></div>
+  </div>
+</div>
+
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import{getAuth,signOut,onAuthStateChanged}from"https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import{getFirestore,doc,getDoc,updateDoc,addDoc,collection,query,where,getDocs,orderBy,serverTimestamp,increment}from"https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+const FB={apiKey:"AIzaSyAicy4ym0omYMS5te0BXsR15d7jTrcydak",authDomain:"velaro-c487e.firebaseapp.com",projectId:"velaro-c487e",storageBucket:"velaro-c487e.firebasestorage.app",messagingSenderId:"394100524704",appId:"1:394100524704:web:a44d395c404d6f6eb2abc5"};
+const app=initializeApp(FB);const auth=getAuth(app);const db=getFirestore(app);
+const BASE="/Velaro/";let CU=null,CD=null,SW="";
+function toast(m,t=""){const el=document.getElementById("t");el.textContent=m;el.className="toast show "+t;setTimeout(()=>el.className="toast",3500);}
+function fmt(ts){if(!ts)return"—";const d=ts.toDate?ts.toDate():new Date(ts);return d.toLocaleDateString("en-PK",{day:"2-digit",month:"short",year:"numeric"});}
+function pad(n){return String(n).padStart(2,"0");}
+function sym(c){return c==="USD"?"$":"Rs";}
+window.openM=id=>document.getElementById(id).classList.remove("hidden");
+window.closeM=id=>document.getElementById(id).classList.add("hidden");
+window.showS=function(id){["sTeam","sRew","sTx"].forEach(s=>document.getElementById(s)?.classList.add("hidden"));document.getElementById(id)?.classList.remove("hidden");document.getElementById(id)?.scrollIntoView({behavior:"smooth"});};
+window.goTo=function(page){window.location.href=BASE+page;};
+window.copyRef=function(){if(!CD)return;navigator.clipboard.writeText(CD.referralCode).then(()=>toast("Referral code copied!","ok")).catch(()=>toast("Code: "+CD.referralCode,"info"));};
+window.selWM=function(m,id){SW=m;document.querySelectorAll(".wmbtn").forEach(b=>b.classList.remove("sel"));document.getElementById(id)?.classList.add("sel");};
+window.doLogout=async function(){await signOut(auth);window.location.replace(BASE+"index.html");};
+onAuthStateChanged(auth,async user=>{
+  if(!user)return window.location.replace(BASE+"index.html");
+  try{
+    const s=await getDoc(doc(db,"users",user.uid));
+    if(!s.exists())return window.location.replace(BASE+"index.html");
+    const d=s.data();
+    if(d.blocked){await signOut(auth);return window.location.replace(BASE+"index.html");}
+    if(d.role==="admin")return window.location.replace(BASE+"admin.html");
+    CU=user;CD=d;initDash(user,d);
+  }catch(e){toast("Connection error","err");}
+});
+function initDash(user,d){
+  document.getElementById("loader").classList.add("hidden");
+  document.getElementById("app").classList.remove("hidden");
+  const nm=d.displayName||d.email.split("@")[0];
+  const s=sym(d.currency||"PKR");
+  document.getElementById("uname").textContent=nm;
+  document.getElementById("ava").textContent=nm[0].toUpperCase();
+  document.getElementById("csym").textContent=s;
+  document.getElementById("wbal").textContent=d.balance||0;
+  document.getElementById("wuid").textContent=user.uid.substring(0,8).toUpperCase();
+  document.getElementById("wref").textContent=d.referralCode;
+  document.getElementById("rwCode").textContent=d.referralCode;
+  document.getElementById("rwAmt").textContent=`${s} 100`;
+  document.getElementById("stD").textContent=`${s} ${d.totalDeposit||0}`;
+  document.getElementById("stW").textContent=`${s} ${d.totalWithdraw||0}`;
+  document.getElementById("stP").textContent=`${s} ${d.totalProfit||0}`;
+  document.getElementById("stT").textContent=`${s} ${d.teamEarnings||0}`;
+  document.getElementById("pava").textContent=nm[0].toUpperCase();
+  document.getElementById("pEmail").textContent=d.email;
+  document.getElementById("pUID").textContent=user.uid.substring(0,12).toUpperCase();
+  document.getElementById("pRef").textContent=d.referralCode;
+  document.getElementById("pBal").textContent=`${s} ${d.balance||0}`;
+  document.getElementById("pDate").textContent=fmt(d.createdAt);
+  if(d.displayName)document.getElementById("pName").value=d.displayName;
+  startTimer();loadDepInfo();loadTeam(user.uid);loadTx(user.uid,s);
+}
+function startTimer(){function upd(){const now=new Date();const mid=new Date();mid.setHours(24,0,0,0);let diff=Math.floor((mid-now)/1000);const h=Math.floor(diff/3600);diff%=3600;const m=Math.floor(diff/60);const s2=diff%60;document.getElementById("th").textContent=pad(h);document.getElementById("tm").textContent=pad(m);document.getElementById("ts").textContent=pad(s2);}upd();setInterval(upd,1000);}
+async function loadDepInfo(){try{const s=await getDoc(doc(db,"settings","deposit"));const el=document.getElementById("dinfo");if(s.exists()){const d=s.data();let i="<strong style='color:var(--a)'>Send payment to:</strong><br>";if(d.EasyPaisa?.number)i+=`📱 EasyPaisa: <strong>${d.EasyPaisa.number}</strong> (${d.EasyPaisa.name})<br>`;if(d.JazzCash?.number)i+=`📱 JazzCash: <strong>${d.JazzCash.number}</strong> (${d.JazzCash.name})<br>`;if(d.Bank?.number)i+=`🏦 Bank: <strong>${d.Bank.number}</strong> (${d.Bank.name})<br>`;if(d.USD?.number)i+=`💵 USD: <strong>${d.USD.number}</strong> (${d.USD.name})`;el.innerHTML=i||"Contact admin.";}else{el.textContent="Contact admin for deposit details.";}}catch(e){}}
+async function loadTeam(uid){const el=document.getElementById("teamList");el.innerHTML="";const q=query(collection(db,"users"),where("referredBy","==",uid));const s=await getDocs(q);if(s.empty){el.innerHTML=`<div class="empty"><i class="fa fa-users"></i><p>No team members yet</p></div>`;return;}s.forEach(d=>{const u=d.data();const c=document.createElement("div");c.className="titem";c.innerHTML=`<div class="tava">${u.email[0].toUpperCase()}</div><div><p style="font-size:13px;font-weight:600;color:var(--tx)">${u.displayName||u.email}</p><p style="font-size:11px;color:var(--tx2)">Joined: ${fmt(u.createdAt)}</p></div>`;el.appendChild(c);});}
+async function loadTx(uid,s){const el=document.getElementById("txList");el.innerHTML="";try{const q=query(collection(db,"transactions"),where("userId","==",uid),orderBy("createdAt","desc"));const snap=await getDocs(q);if(snap.empty){el.innerHTML=`<div class="empty"><i class="fa fa-history"></i><p>No transactions yet</p></div>`;return;}const types={deposit:"Deposit",withdraw:"Withdrawal",plan_activation:"Plan Activated",daily_profit:"Daily Profit",referral_bonus:"Referral Bonus",admin_credit:"Admin Credit",admin_debit:"Admin Debit"};snap.forEach(d=>{const tx=d.data();const isC=tx.amount>0;const c=document.createElement("div");c.className="txitem";c.innerHTML=`<div><p class="txtype">${types[tx.type]||tx.type}</p><p class="txmeta">${tx.note||""} · ${fmt(tx.createdAt)}</p></div><p class="txamt ${isC?'cr':'db'}">${isC?'+':''}${s} ${Math.abs(tx.amount)}</p>`;el.appendChild(c);});}catch(e){el.innerHTML=`<div class="empty"><p>Loading...</p></div>`;}}
+window.doDeposit=async function(){const amt=Number(document.getElementById("dAmt").value);const meth=document.getElementById("dMeth").value.trim();const txid=document.getElementById("dTx").value.trim();if(!amt||amt<100)return toast("Minimum deposit is 100","err");if(!meth)return toast("Enter payment method","err");if(!txid)return toast("Enter transaction ID","err");try{await addDoc(collection(db,"deposits"),{userId:CU.uid,email:CD.email,amount:amt,method:meth,txId:txid,status:"pending",createdAt:serverTimestamp()});closeM("mDep");toast("Deposit submitted! Awaiting approval.","ok");document.getElementById("dAmt").value="";document.getElementById("dMeth").value="";document.getElementById("dTx").value="";}catch(e){toast("Error. Try again.","err");}};
+window.doWithdraw=async function(){const amt=Number(document.getElementById("wAmt").value);const acc=document.getElementById("wAcc").value.trim();const meth=document.getElementById("wMeth").value.trim();if(!amt||amt<200)return toast("Minimum withdrawal is 200","err");if(!acc)return toast("Enter account number","err");if(!meth)return toast("Enter withdrawal method","err");const s=await getDoc(doc(db,"users",CU.uid));if((s.data().balance||0)<amt)return toast("Insufficient balance","err");try{await addDoc(collection(db,"withdraws"),{userId:CU.uid,email:CD.email,amount:amt,account:acc,method:meth,status:"pending",createdAt:serverTimestamp()});closeM("mWd");toast("Withdrawal submitted! 12-24 hrs processing.","ok");document.getElementById("wAmt").value="";document.getElementById("wAcc").value="";document.getElementById("wMeth").value="";}catch(e){toast("Error. Try again.","err");}};
+window.saveName=async function(){const nm=document.getElementById("pName").value.trim();if(!nm)return toast("Enter a name","err");try{await updateDoc(doc(db,"users",CU.uid),{displayName:nm});toast("Name saved!","ok");document.getElementById("uname").textContent=nm;document.getElementById("ava").textContent=nm[0].toUpperCase();document.getElementById("pava").textContent=nm[0].toUpperCase();closeM("mProfile");}catch(e){toast("Error saving","err");}};
+window.saveWallet=async function(){const num=document.getElementById("wmNum").value.trim();const nm=document.getElementById("wmNm").value.trim();if(!SW)return toast("Select a method","err");if(!num)return toast("Enter account number","err");if(!nm)return toast("Enter account holder name","err");try{await updateDoc(doc(db,"users",CU.uid),{wallet:{method:SW,number:num,name:nm}});toast("Wallet saved!","ok");closeM("mWallet");}catch(e){toast("Error saving","err");}};
+</script>
+</body>
+</html>

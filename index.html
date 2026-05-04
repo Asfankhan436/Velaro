@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Velaro</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+:root{--p:#1e6fff;--a:#00d4ff;--g:#00e676;--r:#ff4d6d;--tx:#e8edf5;--tx2:#8a9bb8;--fh:'Syne',sans-serif;--fb:'DM Sans',sans-serif;--inp:#070d1c;}
+html,body{min-height:100vh;font-family:var(--fb);color:var(--tx);background:#0a0e1a;}
+body{display:flex;align-items:center;justify-content:center;padding:20px;}
+.orb{position:fixed;border-radius:50%;filter:blur(80px);pointer-events:none;}
+.o1{width:350px;height:350px;background:rgba(30,111,255,.12);top:-80px;left:-80px;}
+.o2{width:280px;height:280px;background:rgba(0,212,255,.07);bottom:-60px;right:-60px;}
+.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-80px);background:#131d35;color:var(--tx);padding:12px 24px;border-radius:50px;font-size:14px;border:1px solid rgba(255,255,255,.08);z-index:9999;transition:transform .35s cubic-bezier(.34,1.56,.64,1);white-space:nowrap;max-width:90vw;text-align:center;}
+.toast.show{transform:translateX(-50%) translateY(0);}
+.toast.ok{border-color:rgba(0,230,118,.5);color:var(--g);}
+.toast.err{border-color:rgba(255,77,109,.5);color:var(--r);}
+.wrap{position:relative;z-index:1;background:#0f1729;border:1px solid rgba(255,255,255,.07);border-radius:24px;padding:36px 28px;width:100%;max-width:400px;box-shadow:0 24px 64px rgba(0,0,0,.6);}
+.brand{text-align:center;margin-bottom:28px;}
+.logo{width:68px;height:68px;background:linear-gradient(135deg,var(--p),var(--a));border-radius:20px;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;box-shadow:0 0 28px rgba(30,111,255,.3);}
+.logo span{font-family:var(--fh);font-size:34px;font-weight:800;color:#fff;}
+.bname{font-family:var(--fh);font-size:28px;font-weight:800;background:linear-gradient(135deg,#fff,var(--a));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.btag{color:var(--tx2);font-size:12px;margin-top:5px;letter-spacing:1.5px;text-transform:uppercase;}
+.tabs{display:flex;background:rgba(255,255,255,.04);border-radius:12px;padding:4px;margin-bottom:22px;border:1px solid rgba(255,255,255,.07);}
+.tab{flex:1;padding:10px;border:none;background:transparent;border-radius:9px;font-family:var(--fb);font-size:14px;font-weight:500;color:var(--tx2);cursor:pointer;transition:all .2s;}
+.tab.on{background:var(--p);color:#fff;font-weight:600;}
+.form{display:none;flex-direction:column;gap:12px;}
+.form.on{display:flex;}
+.ig{position:relative;}
+.ig input{width:100%;padding:13px 14px 13px 44px;border:1.5px solid rgba(255,255,255,.08);border-radius:13px;font-family:var(--fb);font-size:14px;color:#e8edf5;background:var(--inp);outline:none;transition:border-color .2s;-webkit-text-fill-color:#e8edf5;caret-color:#e8edf5;}
+.ig input:-webkit-autofill,.ig input:-webkit-autofill:hover,.ig input:-webkit-autofill:focus{-webkit-box-shadow:0 0 0 9999px var(--inp) inset!important;-webkit-text-fill-color:#e8edf5!important;}
+.ig input:focus{border-color:rgba(30,111,255,.5);}
+.ig input::placeholder{color:rgba(138,155,184,.45);}
+.ii{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--tx2);font-size:13px;pointer-events:none;}
+.eye{position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--tx2);cursor:pointer;font-size:13px;}
+.btn{padding:14px;background:linear-gradient(135deg,var(--p),#0a8fd1);color:#fff;border:none;border-radius:13px;font-family:var(--fh);font-size:15px;font-weight:700;cursor:pointer;width:100%;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 4px 18px rgba(30,111,255,.4);letter-spacing:.5px;}
+.btn:disabled{opacity:.7;cursor:not-allowed;}
+.sp{width:18px;height:18px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;display:none;}
+@keyframes spin{to{transform:rotate(360deg);}}
+</style>
+</head>
+<body>
+<div class="orb o1"></div><div class="orb o2"></div>
+<div id="t" class="toast"></div>
+<div class="wrap">
+  <div class="brand">
+    <div class="logo"><span>V</span></div>
+    <div class="bname">Velaro</div>
+    <div class="btag">Earn Smart · Play Smart</div>
+  </div>
+  <div class="tabs">
+    <button class="tab on" onclick="sw('l',this)">Login</button>
+    <button class="tab" onclick="sw('s',this)">Sign Up</button>
+  </div>
+  <div id="lf" class="form on">
+    <div class="ig"><input type="email" id="le" placeholder="Email Address" autocomplete="off"/><i class="fa fa-envelope ii"></i></div>
+    <div class="ig"><input type="password" id="lp" placeholder="Password"/><i class="fa fa-lock ii"></i><i class="fa fa-eye eye" onclick="tp('lp',this)"></i></div>
+    <button class="btn" id="lbtn" onclick="doLogin()"><span>Login</span><div class="sp" id="ls"></div></button>
+  </div>
+  <div id="sf" class="form">
+    <div class="ig"><input type="email" id="se" placeholder="Email Address" autocomplete="off"/><i class="fa fa-envelope ii"></i></div>
+    <div class="ig"><input type="password" id="sp2" placeholder="Password (min 6)"/><i class="fa fa-lock ii"></i><i class="fa fa-eye eye" onclick="tp('sp2',this)"></i></div>
+    <div class="ig"><input type="text" id="sr" placeholder="Referral Code (Optional)"/><i class="fa fa-user-plus ii"></i></div>
+    <button class="btn" id="sbtn" onclick="doSignup()"><span>Create Account</span><div class="sp" id="ss"></div></button>
+  </div>
+</div>
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import{getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,onAuthStateChanged}from"https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import{getFirestore,doc,setDoc,getDoc,collection,query,where,getDocs,updateDoc,addDoc,serverTimestamp,increment}from"https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+const FB={apiKey:"AIzaSyAicy4ym0omYMS5te0BXsR15d7jTrcydak",authDomain:"velaro-c487e.firebaseapp.com",projectId:"velaro-c487e",storageBucket:"velaro-c487e.firebasestorage.app",messagingSenderId:"394100524704",appId:"1:394100524704:web:a44d395c404d6f6eb2abc5"};
+const app=initializeApp(FB);const auth=getAuth(app);const db=getFirestore(app);
+const BASE="/Velaro/";let going=false;
+function toast(m,t=""){const el=document.getElementById("t");el.textContent=m;el.className="toast show "+t;setTimeout(()=>el.className="toast",3500);}
+function genRef(){return"VLR"+Math.random().toString(36).substring(2,7).toUpperCase();}
+function fbErr(c){return{"auth/email-already-in-use":"Email already registered","auth/invalid-email":"Invalid email","auth/weak-password":"Password min 6 chars","auth/user-not-found":"No account found","auth/wrong-password":"Wrong password","auth/invalid-credential":"Wrong email or password","auth/too-many-requests":"Too many attempts. Try later."}[c]||"Error. Try again.";}
+window.sw=function(f,btn){document.querySelectorAll(".tab").forEach(b=>b.classList.remove("on"));document.querySelectorAll(".form").forEach(x=>x.classList.remove("on"));document.getElementById(f+"f").classList.add("on");btn.classList.add("on");};
+window.tp=function(id,ico){const i=document.getElementById(id);i.type=i.type==="password"?"text":"password";ico.classList.toggle("fa-eye");ico.classList.toggle("fa-eye-slash");};
+window.doLogin=async function(){
+  const email=document.getElementById("le").value.trim();const pass=document.getElementById("lp").value;
+  if(!email)return toast("Enter your email","err");
+  if(!pass)return toast("Enter your password","err");
+  const sp=document.getElementById("ls");const btn=document.getElementById("lbtn");
+  sp.style.display="block";btn.disabled=true;
+  try{await signInWithEmailAndPassword(auth,email,pass);}
+  catch(er){sp.style.display="none";btn.disabled=false;toast(fbErr(er.code),"err");}
+};
+window.doSignup=async function(){
+  const email=document.getElementById("se").value.trim();const pass=document.getElementById("sp2").value;const ref=document.getElementById("sr").value.trim().toUpperCase();
+  if(!email)return toast("Enter your email","err");
+  if(!pass)return toast("Enter a password","err");
+  if(pass.length<6)return toast("Password min 6 characters","err");
+  const sp=document.getElementById("ss");const btn=document.getElementById("sbtn");
+  sp.style.display="block";btn.disabled=true;
+  try{
+    const cred=await createUserWithEmailAndPassword(auth,email,pass);
+    const uid=cred.user.uid;const rc=genRef();let referredBy=null;
+    if(ref){const q=query(collection(db,"users"),where("referralCode","==",ref));const s=await getDocs(q);if(!s.empty){referredBy=s.docs[0].id;await updateDoc(doc(db,"users",referredBy),{balance:increment(100),teamEarnings:increment(100)});await addDoc(collection(db,"transactions"),{userId:referredBy,type:"referral_bonus",amount:100,note:"Referral bonus",createdAt:serverTimestamp()});}}
+    await setDoc(doc(db,"users",uid),{uid,email,displayName:"",balance:0,role:"user",referralCode:rc,referredBy,totalDeposit:0,totalWithdraw:0,totalProfit:0,teamEarnings:0,blocked:false,currency:"PKR",wallet:{method:"",number:"",name:""},createdAt:serverTimestamp()});
+    toast("Account created! Welcome to Velaro","ok");
+  }catch(er){sp.style.display="none";btn.disabled=false;toast(fbErr(er.code),"err");}
+};
+onAuthStateChanged(auth,async user=>{
+  if(user&&!going){going=true;
+    try{const s=await getDoc(doc(db,"users",user.uid));if(s.exists()){const d=s.data();if(d.blocked){going=false;toast("Account blocked","err");return;}window.location.replace(d.role==="admin"?BASE+"admin.html":BASE+"dashboard.html");}else{going=false;}}
+    catch(e){going=false;toast("Connection error","err");}
+  }
+});
+</script>
+</body>
+</html>
